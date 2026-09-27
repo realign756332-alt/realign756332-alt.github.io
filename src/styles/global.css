@@ -56,6 +56,16 @@ svg {
 
 img {
   height: auto;
+  /* Картинки нельзя утащить мышью (плюс draggable="false" в разметке). */
+  -webkit-user-drag: none;
+}
+
+/* Декоративные картинки и значки не выделяются при выделении текста. */
+img[alt=''],
+svg[aria-hidden='true'],
+.mascot img {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 a {

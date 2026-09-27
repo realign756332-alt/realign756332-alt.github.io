@@ -18,7 +18,7 @@
 | Список языков | `src/i18n/config.mjs` |
 | Шаблоны страниц (общие для всех языков) | `src/views/` |
 | Цвета, шрифты, размеры (дизайн-токены) | `src/styles/tokens.css` |
-| Логотип (SVG) | `src/assets/logo.svg` |
+| Логотип (значок «B» + «itEon Studio») | `src/lib/logo.mjs`, компонент `src/components/Logo.astro` |
 | Маскот (2D) | `src/assets/mascot/mascot-2d.jpg` (готовится из `assets/mascot/mascot-2d.jpg`) |
 | Картинка для соцсетей, favicon | `public/` (готовятся скриптом, см. ниже) |
 | Исходники бренда (не трогать) | `assets/` |
@@ -92,7 +92,8 @@ npm run check    # проверить, что в данных и коде нет
 ## Как заменить маскота
 
 **2D-картинка:** замени файл `assets/mascot/mascot-2d.jpg` и запусти
-`pip install rembg onnxruntime pillow && python3 scripts/cutout-mascot.py`.
+`pip install rembg onnxruntime pillow scipy && python3 scripts/cutout-mascot.py`.
+Исходник должен быть на чистом чёрном фоне.
 Скрипт вырежет фигуру из фона (прозрачный PNG, без прямоугольного края) и положит её в
 `src/assets/mascot/mascot-2d.png`. Проверь результат глазами. Если исходник уже с прозрачным
 фоном — просто положи его в `src/assets/mascot/mascot-2d.png` и поправь `aspect-ratio` в `src/components/Hero.astro`.
@@ -102,9 +103,10 @@ npm run check    # проверить, что в данных и коде нет
 
 ## Как заменить логотип, favicon и картинку для соцсетей
 
-- Логотип: `src/assets/logo.svg` (цвет берётся из текста — лаймовый на чёрном, тёмно-синий на лаймовом).
-- Потом `npm run assets` — пересоберёт favicon, иконку для iPhone и картинку для соцсетей
-  (`public/og-default.jpg`, из `assets/brand/banner.jpg`).
+- Логотип: контуры буквы «B» и значок — в `src/lib/logo.mjs`. Шапка и подвал берут его оттуда сами.
+- Потом `npm run assets` — пересоберёт favicon, иконки и `src/assets/logo.svg`.
+- Картинка для соцсетей (логотип + маскот): `npm i --no-save playwright && npx playwright install chromium && node scripts/og-image.mjs`
+  → `public/og-default.jpg`. На картинке нет слов, кроме названия, поэтому она общая для всех языков.
 
 ## Как подключить свой домен
 

@@ -29,7 +29,7 @@ const hasLive = apps.some((a) => a.data.status === 'live');
             const text = appText(app, locale);
             return (
               <li class="app" id={`app-${d.slug}`}>
-                <Image src={d.icon} alt="" width={64} height={64} class="app-icon" loading="lazy" />
+                <Image src={d.icon} alt="" width={64} height={64} class="app-icon" loading="lazy" draggable="false" />
                 <div class="app-main">
                   <h3>
                     {sections.apps ? <a href={appHref(app, locale)}>{d.name}</a> : d.name}
