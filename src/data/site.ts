@@ -5,7 +5,7 @@ export const site = {
   description:
     'BitEon Studio makes focused mobile and web apps. Each one does one job well, shows its price up front and installs from the App Store, Google Play or your browser.',
   founder: 'Alex',
-  // Ссылка на YouTube-канал. Пока пусто — ссылка на сайте не показывается.
+  // Ссылка на YouTube-канал. Канала пока нет: поле пустое, ссылка на сайте не показывается.
   youtubeUrl: '',
   // Адрес поддержки. Пока пусто — не показывается.
   supportEmail: '',

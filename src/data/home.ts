@@ -7,11 +7,11 @@ export const whyPoints = [
   },
   {
     title: 'Clear prices',
-    text: 'You see the price before you tap. Cancel a subscription any time in your App Store, Google Play or Paddle account.',
+    text: 'Every app shows its price up front, before you buy.',
   },
   {
     title: 'No tracking on this site',
-    text: 'No ad trackers and no cookie banners. Our apps collect only what they need to work.',
+    text: "No ad trackers and no cookie banners. Each app's privacy policy explains exactly what data it uses.",
   },
   {
     title: 'Built by a real person',
@@ -23,22 +23,22 @@ export const whyPoints = [
 export const homeFaq = [
   {
     q: 'How do I buy a mobile app?',
-    a: 'Tap “Get on App Store” or “Get on Google Play” on the app’s page. Apple or Google handles the payment and the download, the same as any other app.',
+    a: 'Mobile apps are sold through the App Store and Google Play. Apple and Google handle payment and downloads under their own rules.',
   },
   {
     q: 'How do I pay for a web app?',
-    a: 'Web apps use Paddle checkout. Paddle is our Merchant of Record: it processes the order, takes the payment by card or another local method and sends you the receipt.',
+    a: 'Payment terms for each web app will be listed on that app’s page.',
   },
   {
     q: 'Can I get a refund?',
-    a: 'Yes. For web apps, contact us or Paddle within 14 days of purchase. For mobile apps, request the refund from Apple or Google, because they handle store payments.',
+    a: 'Refunds for mobile apps follow App Store and Google Play rules: request them from Apple or Google. Refund terms for each web app will be listed on that app’s page.',
   },
   {
     q: 'How do I get support?',
-    a: 'Use the support link inside the app or on its page. Your message goes straight to the developer, and we usually reply within two business days.',
+    a: 'Use the support link inside the app or on the app’s page on this site. Your message goes straight to the developer.',
   },
   {
-    q: 'Do updates cost extra?',
-    a: 'No. Updates are free for as long as you own the app or your subscription is active.',
+    q: 'Which devices do the apps work on?',
+    a: 'Each app’s page lists its platforms: iPhone, Android or any modern web browser.',
   },
 ];
