@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="20 25 920 950" fill="currentColor" role="img" aria-label="BitEon Studio">
+  <defs>
+    <pattern id="biteon-grid" x="390" y="398" width="30" height="30" patternUnits="userSpaceOnUse">
+      <rect width="24" height="24" x="3" y="3"/>
+    </pattern>
+  </defs>
+  <path d="M42 35H355V965L30 662V47Q30 35 42 35Z"/>
+  <path d="M390 35H690C820 35 905 120 905 240V300C905 355 885 405 848 440L698 352C706 334 710 314 706 292C698 236 660 200 606 200H390Z"/>
+  <path fill="url(#biteon-grid)" d="M390 398H655C676 398 689 385 693 370L832 452C893 505 925 575 925 660V805C925 893 857 965 768 965H390V800H602C668 800 716 758 716 697C716 636 668 592 602 592H390Z"/>
+</svg>

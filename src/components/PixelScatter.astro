@@ -1,0 +1,62 @@
+---
+// Фирменный мотив: квадратные «пиксели», которые рассыпаются от плотного центра к краям.
+// Координаты считаются при сборке (фиксированный seed), поэтому картинка всегда одинаковая
+// и не требует JavaScript.
+interface Props {
+  class?: string;
+  count?: number;
+  seed?: number;
+}
+const { class: className, count = 170, seed = 7 } = Astro.props;
+
+let s = seed;
+const rand = () => {
+  s = (s * 16807) % 2147483647;
+  return (s - 1) / 2147483646;
+};
+
+const size = 600;
+const c = size / 2;
+const pixels = Array.from({ length: count }, () => {
+  const angle = rand() * Math.PI * 2;
+  // Чем больше степень, тем плотнее центр.
+  const dist = Math.pow(rand(), 0.9) * (c - 12);
+  const edge = dist / c; // 0 в центре, ~1 у края
+  const px = Math.round(3 + (1 - edge) * 6 * rand());
+  return {
+    x: Math.round(c + Math.cos(angle) * dist * 1.05),
+    y: Math.round(c + Math.sin(angle) * dist * 0.95),
+    s: px,
+    o: +(0.25 + (1 - edge) * 0.65 * rand()).toFixed(2),
+    // задержка появления растёт к краю — эффект «рассыпания»
+    d: Math.round(edge * 700 + rand() * 200),
+  };
+});
+---
+
+<svg class:list={['pixel-scatter', className]} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" focusable="false">
+  {pixels.map((p) => <rect x={p.x} y={p.y} width={p.s} height={p.s} opacity={p.o} style={`--d:${p.d}ms`} />)}
+</svg>
+
+<style>
+  .pixel-scatter {
+    fill: var(--accent);
+    overflow: visible;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pixel-scatter rect {
+      animation: pixel-in 900ms var(--ease-out) both;
+      animation-delay: calc(250ms + var(--d));
+    }
+    @keyframes pixel-in {
+      from {
+        opacity: 0;
+        transform: scale(0.6);
+      }
+    }
+    .pixel-scatter rect {
+      transform-origin: 300px 300px;
+      transform-box: view-box;
+    }
+  }
+</style>

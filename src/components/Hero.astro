@@ -1,0 +1,202 @@
+---
+import { Picture } from 'astro:assets';
+import PixelScatter from './PixelScatter.astro';
+import mascot from '../assets/mascot/mascot-2d.jpg';
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <h1 id="hero-title">Apps that just work</h1>
+      <p class="hero-lead">
+        BitEon Studio makes focused mobile and web apps. Each one does one job well, shows its price up front and stays out
+        of your way.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/#apps">
+          Browse apps
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 14 14 6M7 6h7v7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </a>
+        <a class="btn btn-outline" href="/#faq">How buying works</a>
+      </div>
+    </div>
+
+    <div class="hero-visual" data-parallax>
+      <div class="hero-glow" aria-hidden="true"></div>
+      <PixelScatter class="hero-pixels" />
+      <!-- Место под маскота зарезервировано размерами: при загрузке ничего не сдвигается.
+           На этапе 2 здесь поверх появится 3D-модель, а картинка останется заглушкой. -->
+      <div class="mascot" id="mascot">
+        <Picture
+          src={mascot}
+          formats={['avif', 'webp']}
+          widths={[260, 400, 624]}
+          sizes="(min-width: 900px) 330px, 230px"
+          alt="The BitEon Studio mascot: a young woman with long navy hair and a lime streak, in a navy polo with a lime B logo, standing with her hands in her pockets."
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Лёгкий параллакс маскота за курсором. Не включается на сенсорных экранах
+  // и при «уменьшить движение».
+  const visual = document.querySelector<HTMLElement>('[data-parallax]');
+  const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (visual && canHover && !reduce) {
+    const hero = visual.closest('.hero') as HTMLElement;
+    let raf = 0;
+    hero.addEventListener('pointermove', (e) => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const r = hero.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        visual.style.setProperty('--px', x.toFixed(3));
+        visual.style.setProperty('--py', y.toFixed(3));
+      });
+    });
+    hero.addEventListener('pointerleave', () => {
+      visual.style.setProperty('--px', '0');
+      visual.style.setProperty('--py', '0');
+    });
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    padding-block: clamp(2rem, 1rem + 4vw, 4rem) 0;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-6);
+    min-height: min(calc(100svh - var(--header-h)), 760px);
+  }
+
+  .hero-copy {
+    display: grid;
+    gap: var(--space-5);
+    max-width: 36rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero h1 {
+    font-size: var(--fs-display);
+    line-height: var(--lh-tight);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+
+  .hero-lead {
+    font-size: var(--fs-lead);
+    color: var(--text-muted);
+    max-width: 30rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+
+  /* Визуальная часть: свечение, пиксели, маскот. Всё внутри своего блока — ничего не наезжает на следующие секции. */
+  .hero-visual {
+    --px: 0;
+    --py: 0;
+    position: relative;
+    display: grid;
+    place-items: center;
+    isolation: isolate;
+    height: min(76svh, 660px);
+    contain: layout paint;
+  }
+
+  .hero-glow {
+    position: absolute;
+    inset: 12% 8% 6%;
+    z-index: -2;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(189 218 38 / 0.42), rgb(189 218 38 / 0.12) 55%, transparent 100%);
+    filter: blur(24px);
+  }
+
+  .hero-visual :global(.hero-pixels) {
+    position: absolute;
+    z-index: -1;
+    width: min(118%, 640px);
+    height: auto;
+    aspect-ratio: 1;
+    transform: translate(calc(var(--px) * -18px), calc(var(--py) * -14px));
+    transition: transform 600ms var(--ease-out);
+  }
+
+  .mascot {
+    height: 100%;
+    aspect-ratio: 624 / 1220;
+    transform: translate(calc(var(--px) * 12px), calc(var(--py) * 8px));
+    transition: transform 600ms var(--ease-out);
+  }
+
+  .mascot :global(picture) {
+    display: block;
+    height: 100%;
+  }
+
+  .mascot :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Мягко растворяем края картинки в чёрном фоне. */
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 10%, #000 74%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 10%, #000 74%, transparent 100%);
+    mask-composite: intersect;
+  }
+
+  /* Один момент при загрузке: свечение разгорается, маскот плавно поднимается. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-glow {
+      animation: glow-in 1400ms var(--ease-out) both;
+    }
+    .mascot :global(picture) {
+      animation: mascot-in 1100ms var(--ease-out) both;
+    }
+    @keyframes glow-in {
+      from {
+        opacity: 0;
+        transform: scale(0.7);
+      }
+    }
+    @keyframes mascot-in {
+      from {
+        transform: translateY(28px) scale(0.97);
+      }
+    }
+  }
+
+  @media (max-width: 900px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      min-height: 0;
+      gap: var(--space-4);
+    }
+    .hero-visual {
+      height: clamp(380px, 110vw, 520px);
+    }
+  }
+</style>
