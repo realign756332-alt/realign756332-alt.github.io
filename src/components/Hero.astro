@@ -31,7 +31,8 @@ const t = useTranslations(locale).hero;
       <div class="mascot" id="mascot">
         <Picture
           src={mascot}
-          formats={['avif', 'webp']}
+          formats={['avif']}
+          fallbackFormat="webp"
           widths={[240, 360, 540, 673]}
           sizes="(min-width: 900px) 330px, 230px"
           alt={t.mascotAlt}
