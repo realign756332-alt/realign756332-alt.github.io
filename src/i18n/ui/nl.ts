@@ -121,8 +121,6 @@ const nl: Dict = {
     tagline: 'Gerichte mobiele en web-apps van één kleine studio.',
     apps: 'Apps',
     categories: 'Categorieën',
-    compare: 'Vergelijken',
-    allComparisons: 'Alle vergelijkingen',
     tools: 'Tools',
     allTools: 'Alle gratis tools',
     faq: 'Veelgestelde vragen',

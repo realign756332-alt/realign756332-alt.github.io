@@ -12,7 +12,7 @@ import { badgeSvg, letterSvg } from '../src/lib/logo.mjs';
 // 3. Буква «B» отдельным файлом (для тех, кому нужен логотип без значка).
 await writeFile('src/assets/logo.svg', letterSvg());
 
-// 4. Иконки сайта: фирменный значок (лаймовый квадрат, тёмно-синяя «B» с пиксельными чашами).
+// 4. Иконки сайта: фирменный значок (лаймовый квадрат, тёмно-синяя «B», нижняя чаша — пиксельная сетка).
 //    Для каждого размера — своя крупность сетки, чтобы она читалась.
 await writeFile('public/favicon.svg', badgeSvg({ size: 32, id: 'fav' }).replace(/ width="32" height="32"/, '') + '\n');
 for (const [size, file] of [

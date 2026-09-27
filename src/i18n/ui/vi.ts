@@ -121,8 +121,6 @@ const vi: Dict = {
     tagline: 'Ứng dụng di động và web tập trung vào một việc, từ một studio nhỏ.',
     apps: 'Ứng dụng',
     categories: 'Danh mục',
-    compare: 'So sánh',
-    allComparisons: 'Tất cả bài so sánh',
     tools: 'Công cụ',
     allTools: 'Tất cả công cụ miễn phí',
     faq: 'Hỏi đáp',

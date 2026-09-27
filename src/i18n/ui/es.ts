@@ -121,8 +121,6 @@ const es: Dict = {
     tagline: 'Apps móviles y web con un propósito claro, hechas por un pequeño estudio.',
     apps: 'Apps',
     categories: 'Categorías',
-    compare: 'Comparativas',
-    allComparisons: 'Todas las comparativas',
     tools: 'Herramientas',
     allTools: 'Todas las herramientas gratis',
     faq: 'Preguntas',

@@ -47,7 +47,6 @@ const apps = defineCollection({
             }),
           )
           .default([]),
-        competitors: z.array(z.string()).default([]),
         // Языки самого приложения (интерфейса), коды BCP 47: en, de, uk, pt-BR …
         appLanguages: z.array(z.string().regex(/^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$/, 'appLanguages: коды языков вида en, de, pt-BR')).default([]),
         // Переводы tagline, description и features: translations.de, translations.ja …

@@ -121,8 +121,6 @@ const ko: Dict = {
     tagline: '작은 스튜디오가 만드는, 한 가지 일에 집중한 모바일·웹 앱.',
     apps: '앱',
     categories: '카테고리',
-    compare: '비교',
-    allComparisons: '전체 비교',
     tools: '도구',
     allTools: '무료 도구 전체',
     faq: '자주 묻는 질문',

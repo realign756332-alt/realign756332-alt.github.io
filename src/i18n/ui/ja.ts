@@ -121,8 +121,6 @@ const ja: Dict = {
     tagline: '小さなスタジオがつくる、用途をしぼったモバイル・Webアプリ。',
     apps: 'アプリ',
     categories: 'カテゴリ',
-    compare: '比較',
-    allComparisons: 'すべての比較',
     tools: 'ツール',
     allTools: '無料ツール一覧',
     faq: 'よくある質問',

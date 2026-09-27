@@ -118,8 +118,6 @@ const en = {
     tagline: 'Focused mobile and web apps, made by one small studio.',
     apps: 'Apps',
     categories: 'Categories',
-    compare: 'Compare',
-    allComparisons: 'All comparisons',
     tools: 'Tools',
     allTools: 'All free tools',
     faq: 'FAQ',

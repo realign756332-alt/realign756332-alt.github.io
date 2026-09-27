@@ -15,7 +15,6 @@ export const site = {
 export const sections = {
   apps: false,
   categories: false,
-  compare: false,
   tools: false,
   faq: false,
   blog: false,

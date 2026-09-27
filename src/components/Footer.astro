@@ -23,10 +23,6 @@ const columns: { title: string; links: Link[] }[] = [
     links: activeCategories.map((c) => ({ label: t.categories.items[c.slug].name, href: categoryHref(c.slug, locale) })),
   },
   {
-    title: f.compare,
-    links: sections.compare ? [{ label: f.allComparisons, href: to('/compare/') }] : [],
-  },
-  {
     title: f.tools,
     links: sections.tools ? [{ label: f.allTools, href: to('/tools/') }] : [],
   },

@@ -128,8 +128,6 @@ const ar: Dict = {
     tagline: 'تطبيقات جوال وويب مركّزة، من استوديو صغير.',
     apps: 'التطبيقات',
     categories: 'الفئات',
-    compare: 'مقارنات',
-    allComparisons: 'كل المقارنات',
     tools: 'أدوات',
     allTools: 'كل الأدوات المجانية',
     faq: 'الأسئلة الشائعة',

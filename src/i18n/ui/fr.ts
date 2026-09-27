@@ -122,8 +122,6 @@ const fr: Dict = {
     tagline: 'Des applis mobiles et web ciblées, conçues par un petit studio.',
     apps: 'Applis',
     categories: 'Catégories',
-    compare: 'Comparatifs',
-    allComparisons: 'Tous les comparatifs',
     tools: 'Outils',
     allTools: 'Tous les outils gratuits',
     faq: 'FAQ',

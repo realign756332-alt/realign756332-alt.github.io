@@ -121,8 +121,6 @@ const de: Dict = {
     tagline: 'Schlanke Mobil- und Web-Apps aus einem kleinen Studio.',
     apps: 'Apps',
     categories: 'Kategorien',
-    compare: 'Vergleiche',
-    allComparisons: 'Alle Vergleiche',
     tools: 'Tools',
     allTools: 'Alle kostenlosen Tools',
     faq: 'FAQ',

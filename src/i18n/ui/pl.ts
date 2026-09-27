@@ -121,8 +121,6 @@ const pl: Dict = {
     tagline: 'Konkretne aplikacje mobilne i webowe od małego studia.',
     apps: 'Aplikacje',
     categories: 'Kategorie',
-    compare: 'Porównania',
-    allComparisons: 'Wszystkie porównania',
     tools: 'Narzędzia',
     allTools: 'Wszystkie darmowe narzędzia',
     faq: 'Pytania',
