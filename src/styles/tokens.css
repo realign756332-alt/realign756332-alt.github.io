@@ -13,8 +13,9 @@
   --line-strong: rgb(255 255 255 / 0.18);
   --glow: rgb(189 218 38 / 0.45);
 
-  /* Шрифт: Montserrat (self-hosted через Astro Fonts) + системный запасной */
-  --font-sans: var(--font-brand), system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* Шрифт: Montserrat (self-hosted через Astro Fonts) + системный запасной.
+     --font-brand уже содержит запасные шрифты (см. src/i18n/fonts.mjs). */
+  --font-sans: var(--font-brand);
 
   /* Типографическая шкала (от 360px до широких экранов) */
   --fs-display: clamp(2.6rem, 1.6rem + 4.6vw, 5rem);
@@ -27,6 +28,8 @@
   --lh-tight: 1.05;
   --lh-heading: 1.2;
   --lh-body: 1.6;
+  --tracking-display: -0.035em;
+  --tracking-heading: -0.02em;
 
   /* Отступы (шаг 4px) */
   --space-1: 0.25rem;
@@ -55,4 +58,40 @@
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-fast: 160ms;
   --dur: 280ms;
+}
+
+/* Языки со своей письменностью: сначала Noto Sans для своих символов, латиница и цифры — Montserrat.
+   Шрифт --font-ja и др. подключается только на страницах своего языка. */
+:root:lang(ja) {
+  --font-sans: var(--font-ja), var(--font-brand);
+}
+:root:lang(ko) {
+  --font-sans: var(--font-ko), var(--font-brand);
+}
+:root:lang(th) {
+  --font-sans: var(--font-th), var(--font-brand);
+}
+:root:lang(hi) {
+  --font-sans: var(--font-hi), var(--font-brand);
+}
+:root:lang(ar) {
+  --font-sans: var(--font-ar), var(--font-brand);
+}
+
+/* Для CJK, тайского, деванагари и арабского: без сжатия букв (в арабском оно рвёт связки),
+   строки чуть выше — у этих письменностей выше надстрочные и подстрочные элементы. */
+:root:is(:lang(ja), :lang(ko), :lang(th), :lang(hi), :lang(ar)) {
+  --tracking-display: 0;
+  --tracking-heading: 0;
+  --lh-tight: 1.25;
+  --lh-heading: 1.35;
+  --lh-body: 1.75;
+}
+
+/* Длинные слова в немецком, нидерландском, польском и т. п. — чуть меньше крупный заголовок. */
+:root:is(:lang(de), :lang(nl), :lang(pl), :lang(ru), :lang(uk), :lang(vi), :lang(fr), :lang(es), :lang(it), :lang(pt)) {
+  --fs-display: clamp(2.3rem, 1.5rem + 3.9vw, 4.4rem);
+}
+:root:is(:lang(ja), :lang(ko), :lang(th), :lang(hi), :lang(ar)) {
+  --fs-display: clamp(2.2rem, 1.5rem + 3.4vw, 4rem);
 }

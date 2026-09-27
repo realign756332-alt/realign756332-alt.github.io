@@ -2,6 +2,14 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { categorySlugs } from './data/categories';
+import { localeCodes } from './i18n/config.mjs';
+
+// Переводы текстов приложения на другие языки сайта (английский — в основных полях).
+const appTranslation = z.object({
+  tagline: z.string().max(80),
+  description: z.string().max(160),
+  features: z.array(z.object({ title: z.string(), text: z.string() })).optional(),
+});
 
 // Одно приложение = один файл src/content/apps/<slug>.md.
 // Описание поля — в README, раздел «Как добавить приложение».
@@ -39,7 +47,10 @@ const apps = defineCollection({
             }),
           )
           .default([]),
-        competitors: z.array(z.string()).default([]),
+        // Языки самого приложения (интерфейса), коды BCP 47: en, de, uk, pt-BR …
+        appLanguages: z.array(z.string().regex(/^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$/, 'appLanguages: коды языков вида en, de, pt-BR')).default([]),
+        // Переводы tagline, description и features: translations.de, translations.ja …
+        translations: z.partialRecord(z.enum(localeCodes as [string, ...string[]]), appTranslation).default({}),
         releaseDate: z.coerce.date().optional(),
         updatedDate: z.coerce.date(),
         status: z.enum(['live', 'coming-soon', 'draft']),

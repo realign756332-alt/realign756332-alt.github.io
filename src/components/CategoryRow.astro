@@ -1,6 +1,10 @@
 ---
 import { getActiveCategories, categoryHref } from '../lib/apps';
 import { sections } from '../data/site';
+import { useTranslations, plural } from '../i18n';
+
+const locale = Astro.currentLocale ?? 'en';
+const t = useTranslations(locale).categories;
 
 const categories = await getActiveCategories();
 const icons = import.meta.glob<{ default: (props: Record<string, unknown>) => unknown }>('../assets/categories/*.svg', {
@@ -14,7 +18,7 @@ const iconFor = (slug: string) => icons[`../assets/categories/${slug}.svg`]?.def
     <section class="section" id="categories" aria-labelledby="categories-title">
       <div class="container">
         <div class="section-head">
-          <h2 id="categories-title">Browse by category</h2>
+          <h2 id="categories-title">{t.title}</h2>
         </div>
         <ul class="cat-row" role="list">
           {categories.map((c) => {
@@ -22,13 +26,11 @@ const iconFor = (slug: string) => icons[`../assets/categories/${slug}.svg`]?.def
             const Tag = sections.categories ? 'a' : 'div';
             return (
               <li id={`category-${c.slug}`}>
-                <Tag class="cat" {...(sections.categories ? { href: categoryHref(c.slug) } : {})}>
+                <Tag class="cat" {...(sections.categories ? { href: categoryHref(c.slug, locale) } : {})}>
                   {Icon && <Icon class="cat-icon" width={64} height={64} />}
-                  <h3>{c.name}</h3>
-                  <p>{c.summary}</p>
-                  <span class="cat-count">
-                    {c.count} {c.count === 1 ? 'app' : 'apps'}
-                  </span>
+                  <h3>{t.items[c.slug].name}</h3>
+                  <p>{t.items[c.slug].summary}</p>
+                  <span class="cat-count">{plural(locale, t.count, c.count)}</span>
                 </Tag>
               </li>
             );
@@ -68,12 +70,15 @@ const iconFor = (slug: string) => icons[`../assets/categories/${slug}.svg`]?.def
   }
 
   .cat :global(.cat-icon) {
-    margin-bottom: var(--space-3);
+    margin-block-end: var(--space-3);
     filter: drop-shadow(0 6px 14px rgb(189 218 38 / 0.18));
   }
 
   .cat h3 {
     font-size: var(--fs-h3);
+    /* Длинные названия («Продуктивность», «Productiviteit») переносятся, а не обрезаются. */
+    hyphens: auto;
+    overflow-wrap: anywhere;
   }
 
   .cat p {
@@ -82,7 +87,7 @@ const iconFor = (slug: string) => icons[`../assets/categories/${slug}.svg`]?.def
   }
 
   .cat-count {
-    margin-top: var(--space-2);
+    margin-block-start: var(--space-2);
     font-size: var(--fs-xs);
     color: var(--text-muted);
   }
@@ -99,7 +104,7 @@ const iconFor = (slug: string) => icons[`../assets/categories/${slug}.svg`]?.def
     .cat :global(.cat-icon) {
       width: 48px;
       height: 48px;
-      margin-bottom: var(--space-1);
+      margin-block-end: var(--space-1);
     }
   }
 </style>

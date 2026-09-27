@@ -1,7 +1,9 @@
 // @ts-check
-import { defineConfig, fontProviders } from 'astro/config';
+import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import { readdirSync, readFileSync } from 'node:fs';
+import { defaultLocale, localeCodes } from './src/i18n/config.mjs';
+import { buildFonts } from './src/i18n/fonts.mjs';
 
 // Адрес сайта. Чтобы подключить свой домен — поменяй только эту строку
 // (и добавь файл public/CNAME, см. README).
@@ -24,40 +26,41 @@ function readUpdatedDates() {
 const updatedDates = readUpdatedDates();
 const latestUpdate = new Date(Math.max(...Object.values(updatedDates).map(Number), 0));
 
+// Путь без языкового префикса: /de/apps/x/ → /apps/x/
+const localePrefix = new RegExp(`^/(${localeCodes.filter((c) => c !== defaultLocale).join('|')})(?=/)`);
+const stripLocale = (/** @type {string} */ path) => path.replace(localePrefix, '') || '/';
+
 export default defineConfig({
   site: SITE,
   trailingSlash: 'always',
   build: { format: 'directory', inlineStylesheets: 'always' },
+  // Встроенный i18n-роутинг Astro: английский в корне, остальные языки — /de/, /ja/, /ar/ …
+  i18n: {
+    locales: localeCodes,
+    defaultLocale,
+    routing: { prefixDefaultLocale: false, redirectToDefaultLocale: false },
+  },
   integrations: [
     sitemap({
+      // Языковые альтернативы (xhtml:link hreflang) для каждой страницы.
+      i18n: {
+        defaultLocale,
+        locales: Object.fromEntries(localeCodes.map((c) => [c, c])),
+      },
+      // Служебные страницы 404 в sitemap не нужны.
+      filter: (page) => !/\/404\/$/.test(new URL(page).pathname),
       serialize(item) {
-        const path = new URL(item.url).pathname;
+        const path = stripLocale(new URL(item.url).pathname);
         const appSlug = path.match(/^\/apps\/([\w-]+)\//)?.[1];
         if (appSlug && updatedDates[appSlug]) item.lastmod = updatedDates[appSlug].toISOString();
         else if (path === '/' && latestUpdate.getTime() > 0) item.lastmod = latestUpdate.toISOString();
+        // x-default ведёт на английскую версию.
+        if (item.links?.length) {
+          item.links.push({ lang: 'x-default', url: new URL(path, SITE).href });
+        }
         return item;
       },
     }),
   ],
-  fonts: [
-    {
-      // Montserrat (Google Fonts) — геометрический гротеск, ближе всего к надписи на баннере.
-      // Файл шрифта лежит в npm-пакете @fontsource-variable/montserrat и отдаётся с нашего сайта:
-      // ни посетитель, ни сборка не обращаются к внешним серверам.
-      provider: fontProviders.local(),
-      name: 'Montserrat',
-      cssVariable: '--font-brand',
-      display: 'swap',
-      fallbacks: ['system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
-      options: {
-        variants: [
-          {
-            src: ['@fontsource-variable/montserrat/files/montserrat-latin-wght-normal.woff2'],
-            weight: '100 900',
-            style: 'normal',
-          },
-        ],
-      },
-    },
-  ],
+  fonts: await buildFonts(),
 });

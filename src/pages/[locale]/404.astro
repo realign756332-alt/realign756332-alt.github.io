@@ -1,0 +1,11 @@
+---
+// Страница «не найдено» на остальных языках: /de/404/, /ja/404/ …
+// GitHub Pages для любого несуществующего адреса отдаёт корневой /404.html;
+// он сам переключает на эту версию, если адрес начинается с /de/, /ja/ и т. д.
+import NotFoundPage from '../../views/NotFoundPage.astro';
+import { localeStaticPaths } from '../../i18n';
+
+export const getStaticPaths = localeStaticPaths;
+---
+
+<NotFoundPage />

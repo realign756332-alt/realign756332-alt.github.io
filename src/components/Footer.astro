@@ -4,37 +4,42 @@
 import Logo from './Logo.astro';
 import { site, sections } from '../data/site';
 import { getPublicApps, getActiveCategories, appHref, categoryHref } from '../lib/apps';
+import { localizePath, useTranslations } from '../i18n';
 
 type Link = { label: string; href: string; external?: boolean };
+
+const locale = Astro.currentLocale ?? 'en';
+const t = useTranslations(locale);
+const f = t.footer;
+const to = (path: string) => localizePath(path, locale);
 
 const apps = await getPublicApps();
 const activeCategories = await getActiveCategories();
 
 const columns: { title: string; links: Link[] }[] = [
-  { title: 'Apps', links: apps.map((a) => ({ label: a.data.name, href: appHref(a) })) },
-  { title: 'Categories', links: activeCategories.map((c) => ({ label: c.name, href: categoryHref(c.slug) })) },
+  { title: f.apps, links: apps.map((a) => ({ label: a.data.name, href: appHref(a, locale) })) },
   {
-    title: 'Compare',
-    links: sections.compare ? [{ label: 'All comparisons', href: '/compare/' }] : [],
+    title: f.categories,
+    links: activeCategories.map((c) => ({ label: t.categories.items[c.slug].name, href: categoryHref(c.slug, locale) })),
   },
   {
-    title: 'Tools',
-    links: sections.tools ? [{ label: 'All free tools', href: '/tools/' }] : [],
+    title: f.tools,
+    links: sections.tools ? [{ label: f.allTools, href: to('/tools/') }] : [],
   },
   {
-    title: 'FAQ',
-    links: [{ label: 'Buying & refunds', href: sections.faq ? '/faq/' : '/#faq' }],
+    title: f.faq,
+    links: [{ label: f.buyingRefunds, href: to(sections.faq ? '/faq/' : '/#faq') }],
   },
   {
-    title: 'Company',
+    title: f.company,
     links: [
       ...(sections.company
         ? [
-            { label: 'About', href: '/about/' },
-            { label: 'Contact', href: '/contact/' },
-            { label: 'Privacy', href: '/privacy/' },
-            { label: 'Terms', href: '/terms/' },
-            { label: 'Refund policy', href: '/refund-policy/' },
+            { label: f.about, href: to('/about/') },
+            { label: f.contact, href: to('/contact/') },
+            { label: f.privacy, href: to('/privacy/') },
+            { label: f.terms, href: to('/terms/') },
+            { label: f.refundPolicy, href: to('/refund-policy/') },
           ]
         : []),
       ...(site.youtubeUrl ? [{ label: 'YouTube', href: site.youtubeUrl, external: true }] : []),
@@ -48,13 +53,13 @@ const year = new Date().getFullYear();
 <footer class="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
-      <a href="/" aria-label="BitEon Studio, home" class="footer-logo">
+      <a href={to('/')} aria-label={t.a11y.homeLink} class="footer-logo">
         <Logo size={28} wordmark />
       </a>
-      <p class="muted">Focused mobile and web apps, made by one small studio.</p>
+      <p class="muted">{f.tagline}</p>
     </div>
 
-    <nav class="footer-cols" aria-label="Footer">
+    <nav class="footer-cols" aria-label={t.a11y.footerNav}>
       {
         columns.map((col) => (
           <div class="footer-col">
@@ -81,8 +86,8 @@ const year = new Date().getFullYear();
 
 <style>
   .site-footer {
-    margin-top: var(--section-gap);
-    border-top: 1px solid var(--line);
+    margin-block-start: var(--section-gap);
+    border-block-start: 1px solid var(--line);
     padding-block: var(--space-8) var(--space-6);
     font-size: var(--fs-small);
   }
@@ -115,7 +120,7 @@ const year = new Date().getFullYear();
     font-size: var(--fs-small);
     font-weight: 700;
     letter-spacing: 0;
-    margin-bottom: var(--space-3);
+    margin-block-end: var(--space-3);
   }
 
   .footer-col ul {
@@ -133,9 +138,9 @@ const year = new Date().getFullYear();
   }
 
   .footer-bottom {
-    margin-top: var(--space-8);
-    padding-top: var(--space-5);
-    border-top: 1px solid var(--line);
+    margin-block-start: var(--space-8);
+    padding-block-start: var(--space-5);
+    border-block-start: 1px solid var(--line);
     color: var(--text-muted);
   }
 

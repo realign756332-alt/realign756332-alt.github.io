@@ -1,6 +1,8 @@
 ---
-import { Font } from 'astro:assets';
+import { Font, fontData } from 'astro:assets';
 import { site } from '../data/site';
+import { locales, defaultLocale, getLocaleInfo, localizePath } from '../i18n';
+import { montserratSubsets } from '../i18n/fonts.mjs';
 
 export interface SeoProps {
   /** До ~60 символов */
@@ -14,11 +16,31 @@ export interface SeoProps {
   noindex?: boolean;
 }
 
-const { title, description, image = site.defaultOgImage, imageAlt = 'BitEon Studio', type = 'website', noindex = false } =
+const { title, description, image = site.defaultOgImage, imageAlt = site.name, type = 'website', noindex = false } =
   Astro.props as SeoProps;
 
+const locale = getLocaleInfo(Astro.currentLocale);
+// canonical — на свою языковую версию страницы.
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const imageUrl = new URL(image, Astro.site);
+
+// hreflang: эта же страница на всех языках + x-default на английскую.
+const alternates = locales.map((l) => ({
+  hreflang: l.code,
+  href: new URL(localizePath(Astro.url.pathname, l.code), Astro.site).href,
+}));
+const xDefault = new URL(localizePath(Astro.url.pathname, defaultLocale), Astro.site).href;
+
+// Заранее грузим только нужные части Montserrat (латиница + кириллица/вьетнамский/latin-ext для своих языков).
+const preloadSubsets = locale.montserrat ?? ['latin'];
+const brandPreloads = (fontData['--font-brand'] ?? [])
+  .filter((_, i) => preloadSubsets.includes(montserratSubsets[i]))
+  .map((f) => f.src[0]?.url)
+  .filter(Boolean);
+// Шрифт письменности (арабский, тайский, хинди) — один небольшой файл: грузим заранее,
+// чтобы текст не «прыгал» при подмене шрифта (CLS).
+const scriptData = locale.script ? (fontData[`--font-${locale.script}` as '--font-brand'] ?? []) : [];
+const scriptPreloads = scriptData.length === 1 ? [scriptData[0].src[0]?.url].filter(Boolean) : [];
 
 if (import.meta.env.DEV) {
   if (title.length > 60) console.warn(`[seo] title длиннее 60 символов: "${title}"`);
@@ -32,6 +54,11 @@ if (import.meta.env.DEV) {
 <meta name="description" content={description} />
 {!noindex && <link rel="canonical" href={canonical} />}
 {noindex && <meta name="robots" content="noindex, follow" />}
+{
+  !noindex &&
+    alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)
+}
+{!noindex && <link rel="alternate" hreflang="x-default" href={xDefault} />}
 <meta name="theme-color" content="#000000" />
 <meta name="generator" content={Astro.generator} />
 
@@ -40,11 +67,19 @@ if (import.meta.env.DEV) {
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 
-<Font cssVariable="--font-brand" preload />
+{[...brandPreloads, ...scriptPreloads].map((url) => <link rel="preload" href={url} as="font" type="font/woff2" crossorigin />)}
+<Font cssVariable="--font-brand" />
+{/* Шрифт письменности (японский, корейский, тайский, хинди, арабский) — только на страницах своего языка. */}
+{locale.script === 'ja' && <Font cssVariable="--font-ja" />}
+{locale.script === 'ko' && <Font cssVariable="--font-ko" />}
+{locale.script === 'th' && <Font cssVariable="--font-th" />}
+{locale.script === 'hi' && <Font cssVariable="--font-hi" />}
+{locale.script === 'ar' && <Font cssVariable="--font-ar" />}
 
 <meta property="og:type" content={type} />
 <meta property="og:site_name" content={site.name} />
-<meta property="og:locale" content="en_US" />
+<meta property="og:locale" content={locale.og} />
+{locales.filter((l) => l.code !== locale.code).map((l) => <meta property="og:locale:alternate" content={l.og} />)}
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
