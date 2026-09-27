@@ -1,15 +1,9 @@
 // Готовит производные картинки из исходников в assets/.
 // Запуск: npm run assets (нужно только после замены исходных файлов).
 import sharp from 'sharp';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 
-await mkdir('src/assets/mascot', { recursive: true });
-
-// 1. Маскот: обрезаем чёрные поля сверху и снизу исходника.
-await sharp('assets/mascot/mascot-2d.jpg')
-  .extract({ left: 40, top: 100, width: 624, height: 1220 })
-  .jpeg({ quality: 92, mozjpeg: true })
-  .toFile('src/assets/mascot/mascot-2d.jpg');
+// 1. Маскот вырезается из фона отдельным скриптом: python3 scripts/cutout-mascot.py (см. README).
 
 // 2. Картинка для соцсетей (Open Graph) 1200×630 из фирменного баннера.
 await sharp('assets/brand/banner.jpg')

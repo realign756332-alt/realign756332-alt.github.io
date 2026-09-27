@@ -51,11 +51,11 @@ const schema = {
   }
 
   .faq-list {
-    border-top: 1px solid var(--line);
+    border-block-start: 1px solid var(--line);
   }
 
   details {
-    border-bottom: 1px solid var(--line);
+    border-block-end: 1px solid var(--line);
   }
 
   summary {
@@ -94,7 +94,7 @@ const schema = {
     position: absolute;
     inset: 50% 0 auto;
     height: 2px;
-    margin-top: -1px;
+    margin-block-start: -1px;
     background: var(--accent);
     transition: transform var(--dur) var(--ease-out);
   }
@@ -109,7 +109,7 @@ const schema = {
 
   details p {
     color: var(--text-muted);
-    padding-bottom: var(--space-5);
+    padding-block-end: var(--space-5);
     max-width: 44rem;
   }
 </style>

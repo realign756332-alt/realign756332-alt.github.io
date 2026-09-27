@@ -1,8 +1,13 @@
 ---
 import { Image } from 'astro:assets';
-import { getPublicApps, priceLabel, platformNames, appHref } from '../lib/apps';
+import { getPublicApps, priceLabel, platformName, appHref, appText } from '../lib/apps';
 import { getCategory } from '../data/categories';
 import { sections } from '../data/site';
+import { useTranslations, languageList } from '../i18n';
+
+const locale = Astro.currentLocale ?? 'en';
+const dict = useTranslations(locale);
+const t = dict.apps;
 
 const apps = (await getPublicApps()).slice(0, 8);
 const hasLive = apps.some((a) => a.data.status === 'live');
@@ -13,44 +18,46 @@ const hasLive = apps.some((a) => a.data.status === 'live');
     <section class="section" id="apps" aria-labelledby="apps-title">
       <div class="container">
         <div class="section-head">
-          <h2 id="apps-title">{hasLive ? 'Featured apps' : 'Apps on the way'}</h2>
-          <p>
-            {hasLive
-              ? 'Pick an app, see the price, install it in one step.'
-              : 'Our first apps are in the works. Here is what they will do.'}
-          </p>
+          <h2 id="apps-title">{hasLive ? t.featuredTitle : t.upcomingTitle}</h2>
+          <p>{hasLive ? t.featuredLead : t.upcomingLead}</p>
         </div>
 
         <ul class="app-list" role="list">
           {apps.map((app) => {
             const d = app.data;
             const category = getCategory(d.category);
+            const text = appText(app, locale);
             return (
               <li class="app" id={`app-${d.slug}`}>
                 <Image src={d.icon} alt="" width={64} height={64} class="app-icon" loading="lazy" />
                 <div class="app-main">
                   <h3>
-                    {sections.apps ? <a href={appHref(app)}>{d.name}</a> : d.name}
-                    {d.example && <span class="tag tag-example">Example</span>}
+                    {sections.apps ? <a href={appHref(app, locale)}>{d.name}</a> : d.name}
+                    {d.example && <span class="tag tag-example">{t.example}</span>}
                   </h3>
-                  <p class="app-tagline">{d.tagline}</p>
+                  <p class="app-tagline">{text.tagline}</p>
                   <p class="app-meta">
-                    <span>{d.type === 'mobile' ? 'Mobile' : 'Web app'}</span>
-                    <span>{d.platforms.map((p) => platformNames[p]).join(', ')}</span>
-                    {category && <span>{category.name}</span>}
-                    <span>{priceLabel(app)}</span>
+                    <span>{d.type === 'mobile' ? t.typeMobile : t.typeWeb}</span>
+                    <span>{d.platforms.map((p) => platformName(p, locale)).join(', ')}</span>
+                    {category && <span>{dict.categories.items[category.slug].name}</span>}
+                    <span>{priceLabel(app, locale)}</span>
                   </p>
+                  {d.appLanguages.length > 0 && (
+                    <p class="app-langs">
+                      {t.appLanguages} <span>{languageList(d.appLanguages, locale)}</span>
+                    </p>
+                  )}
                 </div>
                 <div class="app-action">
-                  {d.status === 'coming-soon' && <span class="tag tag-soon">Coming soon</span>}
+                  {d.status === 'coming-soon' && <span class="tag tag-soon">{t.comingSoon}</span>}
                   {d.status === 'live' && d.type === 'mobile' && d.appStoreUrl && (
-                    <a class="btn btn-primary btn-sm" href={d.appStoreUrl}>Get on App Store</a>
+                    <a class="btn btn-primary btn-sm" href={d.appStoreUrl}>{t.appStore}</a>
                   )}
                   {d.status === 'live' && d.type === 'mobile' && d.googlePlayUrl && (
-                    <a class="btn btn-outline btn-sm" href={d.googlePlayUrl}>Get on Google Play</a>
+                    <a class="btn btn-outline btn-sm" href={d.googlePlayUrl}>{t.googlePlay}</a>
                   )}
                   {d.status === 'live' && d.type === 'web' && d.webAppUrl && (
-                    <a class="btn btn-primary btn-sm" href={d.webAppUrl}>Open app</a>
+                    <a class="btn btn-primary btn-sm" href={d.webAppUrl}>{t.openApp}</a>
                   )}
                 </div>
               </li>
@@ -64,7 +71,7 @@ const hasLive = apps.some((a) => a.data.status === 'live');
 
 <style>
   .app-list {
-    border-top: 1px solid var(--line);
+    border-block-start: 1px solid var(--line);
   }
 
   .app {
@@ -73,7 +80,7 @@ const hasLive = apps.some((a) => a.data.status === 'live');
     align-items: center;
     gap: var(--space-5);
     padding-block: var(--space-5);
-    border-bottom: 1px solid var(--line);
+    border-block-end: 1px solid var(--line);
   }
 
   .app :global(.app-icon) {
@@ -121,10 +128,19 @@ const hasLive = apps.some((a) => a.data.status === 'live');
     display: inline-block;
     width: 4px;
     height: 4px;
-    margin-right: var(--space-4);
+    margin-inline-end: var(--space-4);
     vertical-align: middle;
     background: var(--accent);
     opacity: 0.7;
+  }
+
+  .app-langs {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .app-langs span {
+    color: var(--text);
   }
 
   .app-action {

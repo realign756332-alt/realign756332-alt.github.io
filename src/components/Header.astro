@@ -1,17 +1,25 @@
 ---
 import Logo from './Logo.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
 import { mainNav, headerCta } from '../data/navigation';
+import { localizePath, useTranslations } from '../i18n';
+
+const locale = Astro.currentLocale ?? 'en';
+const t = useTranslations(locale);
+const nav = mainNav.map((item) => ({ label: t.nav[item.key], href: localizePath(item.href, locale) }));
+const cta = { label: t.nav[headerCta.key], href: localizePath(headerCta.href, locale) };
+const home = localizePath('/', locale);
 ---
 
 <header class="site-header">
   <div class="container header-inner">
-    <a href="/" class="brand" aria-label="BitEon Studio, home">
+    <a href={home} class="brand" aria-label={t.a11y.homeLink}>
       <Logo size={30} wordmark />
     </a>
 
-    <nav class="nav-desktop" aria-label="Main">
+    <nav class="nav-desktop" aria-label={t.a11y.mainNav}>
       <ul role="list">
-        {mainNav.map((item) => (
+        {nav.map((item) => (
           <li>
             <a href={item.href}>{item.label}</a>
           </li>
@@ -19,32 +27,34 @@ import { mainNav, headerCta } from '../data/navigation';
       </ul>
     </nav>
 
-    <a class="btn btn-primary btn-sm header-cta" href={headerCta.href}>{headerCta.label}</a>
+    <LanguageSwitcher />
 
-    <button class="menu-toggle" type="button" popovertarget="mobile-menu" aria-label="Open menu">
+    <a class="btn btn-primary btn-sm header-cta" href={cta.href}>{cta.label}</a>
+
+    <button class="menu-toggle" type="button" popovertarget="mobile-menu" aria-label={t.a11y.openMenu}>
       <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
         <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
       </svg>
     </button>
   </div>
 
-  <nav id="mobile-menu" class="nav-mobile" popover aria-label="Main">
+  <nav id="mobile-menu" class="nav-mobile" popover aria-label={t.a11y.mainNav}>
     <div class="nav-mobile-top">
       <Logo size={30} wordmark />
-      <button type="button" popovertarget="mobile-menu" popovertargetaction="hide" class="menu-toggle" aria-label="Close menu">
+      <button type="button" popovertarget="mobile-menu" popovertargetaction="hide" class="menu-toggle" aria-label={t.a11y.closeMenu}>
         <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
           <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
         </svg>
       </button>
     </div>
     <ul role="list">
-      {mainNav.map((item) => (
+      {nav.map((item) => (
         <li>
           <a href={item.href}>{item.label}</a>
         </li>
       ))}
     </ul>
-    <a class="btn btn-primary" href={headerCta.href}>{headerCta.label}</a>
+    <a class="btn btn-primary" href={cta.href}>{cta.label}</a>
   </nav>
 </header>
 
@@ -57,13 +67,13 @@ import { mainNav, headerCta } from '../data/navigation';
 <style>
   .site-header {
     position: sticky;
-    top: 0;
+    inset-block-start: 0;
     z-index: 50;
     height: var(--header-h);
     background: rgb(0 0 0 / 0.72);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid transparent;
+    border-block-end: 1px solid transparent;
   }
 
   /* При прокрутке шапка становится фирменной тёмно-синей — без JavaScript. */
@@ -77,7 +87,7 @@ import { mainNav, headerCta } from '../data/navigation';
     @keyframes header-solid {
       to {
         background: rgb(10 25 38 / 0.9);
-        border-bottom-color: var(--line);
+        border-block-end-color: var(--line);
       }
     }
   }
@@ -91,7 +101,7 @@ import { mainNav, headerCta } from '../data/navigation';
 
   .brand {
     text-decoration: none;
-    margin-right: auto;
+    margin-inline-end: auto;
   }
 
   .nav-desktop ul {
@@ -167,7 +177,10 @@ import { mainNav, headerCta } from '../data/navigation';
     padding: var(--space-3) 0;
   }
 
-  @media (max-width: 860px) {
+  @media (max-width: 960px) {
+    .header-inner {
+      gap: var(--space-3);
+    }
     .nav-desktop,
     .header-cta {
       display: none;

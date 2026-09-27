@@ -1,16 +1,13 @@
-// Общие данные студии. Меняются здесь — обновляются во всех местах сайта.
+// Общие данные студии (тексты на разных языках — в src/i18n/ui/).
+// Меняются здесь — обновляются во всех местах сайта.
 export const site = {
   name: 'BitEon Studio',
-  tagline: 'Mobile and web apps that just work',
-  description:
-    'BitEon Studio makes focused mobile and web apps. Each one does one job well, shows its price up front and installs from the App Store, Google Play or your browser.',
   founder: 'Alex',
   // Ссылка на YouTube-канал. Канала пока нет: поле пустое, ссылка на сайте не показывается.
   youtubeUrl: '',
   // Адрес поддержки. Пока пусто — не показывается.
   supportEmail: '',
   defaultOgImage: '/og-default.jpg',
-  locale: 'en',
 } as const;
 
 // Какие разделы сайта уже собраны. Когда раздел готов — ставим true,

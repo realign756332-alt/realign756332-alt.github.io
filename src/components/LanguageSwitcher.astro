@@ -1,0 +1,150 @@
+---
+// Переключатель языка: обычные ссылки на эту же страницу на другом языке.
+// Список открывается без JavaScript (popover), названия языков — на самих языках.
+import { locales, getLocaleInfo, localizePath, useTranslations, fill } from '../i18n';
+
+const current = getLocaleInfo(Astro.currentLocale);
+const t = useTranslations(current.code);
+const links = locales.map((l) => ({ ...l, href: localizePath(Astro.url.pathname, l.code) }));
+---
+
+<button class="lang-toggle" type="button" popovertarget="lang-menu" title={fill(t.language.change, { lang: current.name })}>
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
+    <path d="M3 12h18M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9M12 3c-2.6 2.6-3.8 5.6-3.8 9s1.2 6.4 3.8 9" fill="none" stroke="currentColor" stroke-width="1.8"></path>
+  </svg>
+  <span class="visually-hidden">{t.language.label}:</span>
+  <span class="lang-code">{current.code.toUpperCase()}</span>
+</button>
+
+<div id="lang-menu" class="lang-menu" popover>
+  <p class="lang-title" id="lang-menu-title">{t.language.label}</p>
+  <ul role="list" aria-labelledby="lang-menu-title">
+    {
+      links.map((l) => (
+        <li>
+          <a
+            href={l.href}
+            hreflang={l.code}
+            lang={l.code}
+            aria-current={l.code === current.code ? 'page' : undefined}
+            data-lang-link
+          >
+            {l.name}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  // Человек сам выбрал язык — подсказка о другом языке больше не нужна.
+  document.querySelectorAll('[data-lang-link]').forEach((a) =>
+    a.addEventListener('click', () => {
+      try {
+        localStorage.setItem('biteon-lang-hint', 'off');
+      } catch {}
+    }),
+  );
+</script>
+
+<style>
+  .lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 2.75rem;
+    padding: 0 var(--space-3);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color var(--dur-fast), color var(--dur-fast);
+  }
+
+  .lang-toggle:hover {
+    border-color: rgb(189 218 38 / 0.55);
+    color: var(--accent);
+  }
+
+  .lang-code {
+    font-family: var(--font-brand);
+    letter-spacing: 0.02em;
+  }
+
+  .lang-menu {
+    position: fixed;
+    inset: auto;
+    inset-block-start: calc(var(--header-h) - var(--space-2));
+    inset-inline-end: max(var(--gutter), (100vw - var(--container)) / 2);
+    width: min(26rem, 100vw - 2 * var(--gutter));
+    max-height: calc(100dvh - var(--header-h) - var(--space-4));
+    overflow-y: auto;
+    margin: 0;
+    padding: var(--space-4);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 24px 60px rgb(0 0 0 / 0.55);
+  }
+
+  .lang-title {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    padding-inline: var(--space-3);
+    margin-block-end: var(--space-2);
+  }
+
+  .lang-menu ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-1);
+  }
+
+  .lang-menu a {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .lang-menu a:hover {
+    background: var(--surface-2);
+    color: var(--accent);
+  }
+
+  .lang-menu a[aria-current='page'] {
+    color: var(--accent);
+    background: rgb(189 218 38 / 0.08);
+    font-weight: 700;
+  }
+
+  .lang-menu a[aria-current='page']::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    margin-inline-start: auto;
+    background: var(--accent);
+  }
+
+  @media (max-width: 560px) {
+    .lang-menu {
+      inset-inline: var(--gutter);
+      width: auto;
+    }
+    .lang-menu a {
+      min-height: 3rem;
+      font-size: 1.0625rem;
+    }
+  }
+</style>

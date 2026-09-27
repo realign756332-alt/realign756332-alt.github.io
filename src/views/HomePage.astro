@@ -1,0 +1,50 @@
+---
+// Главная страница. Один шаблон на все языки: src/pages/index.astro (английский)
+// и src/pages/[locale]/index.astro (/de/, /ja/, /ar/ …).
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import CategoryRow from '../components/CategoryRow.astro';
+import FeaturedApps from '../components/FeaturedApps.astro';
+import WhyBiteon from '../components/WhyBiteon.astro';
+import Faq from '../components/Faq.astro';
+import JsonLd from '../components/JsonLd.astro';
+import { site } from '../data/site';
+import { localizePath, useTranslations } from '../i18n';
+
+const locale = Astro.currentLocale ?? 'en';
+const t = useTranslations(locale);
+const rootUrl = new URL('/', Astro.site).href;
+const pageUrl = new URL(localizePath('/', locale), Astro.site).href;
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${rootUrl}#organization`,
+  name: site.name,
+  url: rootUrl,
+  logo: new URL('/icon-512.png', Astro.site).href,
+  description: t.meta.siteDescription,
+  founder: { '@type': 'Person', name: site.founder, jobTitle: 'Founder' },
+  ...(site.youtubeUrl ? { sameAs: [site.youtubeUrl] } : {}),
+};
+
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${pageUrl}#website`,
+  name: site.name,
+  url: pageUrl,
+  inLanguage: locale,
+  description: t.meta.homeDescription,
+  publisher: { '@id': `${rootUrl}#organization` },
+};
+---
+
+<BaseLayout title={t.meta.homeTitle} description={t.meta.homeDescription} imageAlt={t.meta.homeImageAlt}>
+  <JsonLd slot="head" data={[organization, website]} />
+  <Hero />
+  <CategoryRow />
+  <FeaturedApps />
+  <WhyBiteon />
+  <Faq title={t.faq.title} intro={t.faq.intro} items={t.faq.items} />
+</BaseLayout>

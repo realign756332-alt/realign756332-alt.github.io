@@ -1,10 +1,11 @@
-// Пункты меню в шапке. Пока готова только главная, пункты ведут к её блокам.
-// Когда появятся разделы, замени href на '/apps/', '/tools/' и т. д.
+// Пункты меню в шапке. Подписи — в src/i18n/ui/<язык>.ts (раздел nav).
+// Пока готова только главная, пункты ведут к её блокам.
+// Когда появятся разделы, замени href на '/apps/', '/tools/' и т. д. — язык подставится сам.
 export const mainNav = [
-  { label: 'Apps', href: '/#apps' },
-  { label: 'Categories', href: '/#categories' },
-  { label: 'Why BitEon', href: '/#why' },
-  { label: 'FAQ', href: '/#faq' },
-];
+  { key: 'apps', href: '/#apps' },
+  { key: 'categories', href: '/#categories' },
+  { key: 'why', href: '/#why' },
+  { key: 'faq', href: '/#faq' },
+] as const;
 
-export const headerCta = { label: 'Browse apps', href: '/#apps' };
+export const headerCta = { key: 'cta', href: '/#apps' } as const;

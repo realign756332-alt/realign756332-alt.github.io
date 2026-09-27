@@ -1,11 +1,12 @@
 // Категории приложений. Иконка — файл в src/assets/categories/<slug>.svg.
+// Название и описание категории на каждом языке — в src/i18n/ui/<язык>.ts (categories.items).
 // Категория показывается на сайте, только если в ней есть хотя бы одно приложение.
 export const categories = [
-  { slug: 'productivity', name: 'Productivity', summary: 'Plan, focus and get things done.' },
-  { slug: 'finance', name: 'Finance', summary: 'Track money without spreadsheets.' },
-  { slug: 'utilities', name: 'Utilities', summary: 'Small tools for everyday jobs.' },
-  { slug: 'lifestyle', name: 'Lifestyle', summary: 'Habits, health and daily routine.' },
-  { slug: 'creativity', name: 'Creativity', summary: 'Make images, colors and ideas.' },
+  { slug: 'productivity' },
+  { slug: 'finance' },
+  { slug: 'utilities' },
+  { slug: 'lifestyle' },
+  { slug: 'creativity' },
 ] as const;
 
 export type CategorySlug = (typeof categories)[number]['slug'];

@@ -1,23 +1,24 @@
 ---
 import { Picture } from 'astro:assets';
 import PixelScatter from './PixelScatter.astro';
-import mascot from '../assets/mascot/mascot-2d.jpg';
+import mascot from '../assets/mascot/mascot-2d.png';
+import { localizePath, useTranslations } from '../i18n';
+
+const locale = Astro.currentLocale ?? 'en';
+const t = useTranslations(locale).hero;
 ---
 
 <section class="hero" aria-labelledby="hero-title">
   <div class="container hero-grid">
     <div class="hero-copy">
-      <h1 id="hero-title">Apps that just work</h1>
-      <p class="hero-lead">
-        BitEon Studio makes focused mobile and web apps. Each one does one job well, shows its price up front and stays out
-        of your way.
-      </p>
+      <h1 id="hero-title">{t.title}</h1>
+      <p class="hero-lead">{t.lead}</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="/#apps">
-          Browse apps
-          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 14 14 6M7 6h7v7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <a class="btn btn-primary" href={localizePath('/#apps', locale)}>
+          {t.primary}
+          <svg class="icon-dir" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 14 14 6M7 6h7v7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
         </a>
-        <a class="btn btn-outline" href="/#faq">How buying works</a>
+        <a class="btn btn-outline" href={localizePath('/#faq', locale)}>{t.secondary}</a>
       </div>
     </div>
 
@@ -25,14 +26,15 @@ import mascot from '../assets/mascot/mascot-2d.jpg';
       <div class="hero-glow" aria-hidden="true"></div>
       <PixelScatter class="hero-pixels" />
       <!-- Место под маскота зарезервировано размерами: при загрузке ничего не сдвигается.
+           Картинка вырезана из фона (прозрачный PNG → AVIF/WebP), поэтому края фона не видно.
            На этапе 2 здесь поверх появится 3D-модель, а картинка останется заглушкой. -->
       <div class="mascot" id="mascot">
         <Picture
           src={mascot}
           formats={['avif', 'webp']}
-          widths={[260, 400, 624]}
+          widths={[240, 360, 522]}
           sizes="(min-width: 900px) 330px, 230px"
-          alt="The BitEon Studio mascot: a young woman with long navy hair and a lime streak, in a navy polo with a lime B logo, standing with her hands in her pockets."
+          alt={t.mascotAlt}
           loading="eager"
           fetchpriority="high"
           decoding="async"
@@ -71,7 +73,7 @@ import mascot from '../assets/mascot/mascot-2d.jpg';
 <style>
   .hero {
     position: relative;
-    padding-block: clamp(2rem, 1rem + 4vw, 4rem) 0;
+    padding-block: var(--space-2) 0;
   }
 
   .hero-grid {
@@ -79,7 +81,6 @@ import mascot from '../assets/mascot/mascot-2d.jpg';
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
     align-items: center;
     gap: var(--space-6);
-    min-height: min(calc(100svh - var(--header-h)), 760px);
   }
 
   .hero-copy {
@@ -88,13 +89,15 @@ import mascot from '../assets/mascot/mascot-2d.jpg';
     max-width: 36rem;
     position: relative;
     z-index: 1;
+    /* Текст чуть выше оптического центра маскота — первый экран плотнее. */
+    padding-block-end: var(--space-8);
   }
 
   .hero h1 {
     font-size: var(--fs-display);
     line-height: var(--lh-tight);
     font-weight: 800;
-    letter-spacing: -0.035em;
+    letter-spacing: var(--tracking-display);
   }
 
   .hero-lead {
@@ -107,28 +110,35 @@ import mascot from '../assets/mascot/mascot-2d.jpg';
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
-    margin-top: var(--space-2);
+    margin-block-start: var(--space-2);
   }
 
-  /* Визуальная часть: свечение, пиксели, маскот. Всё внутри своего блока — ничего не наезжает на следующие секции. */
+  /* Визуальная часть: свечение, пиксели, маскот. Всё внутри своего блока — ничего не наезжает
+     на следующие секции. Высота подобрана так, чтобы маскот целиком помещался в первый экран. */
   .hero-visual {
     --px: 0;
     --py: 0;
     position: relative;
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     isolation: isolate;
-    height: min(76svh, 660px);
+    height: clamp(420px, calc(100svh - var(--header-h) - var(--space-5)), 720px);
+    padding-block: var(--space-4) var(--space-3);
     contain: layout paint;
   }
 
+  /* Свечение: мягкий радиальный градиент без рамок — растворяется в чёрном со всех сторон. */
   .hero-glow {
     position: absolute;
-    inset: 12% 8% 6%;
+    /* Отступ снизу больше радиуса размытия: свечение гаснет раньше края блока, без «среза». */
+    inset: 6% 2% 11%;
     z-index: -2;
     border-radius: 50%;
-    background: radial-gradient(closest-side, rgb(189 218 38 / 0.42), rgb(189 218 38 / 0.12) 55%, transparent 100%);
-    filter: blur(24px);
+    background:
+      radial-gradient(closest-side, rgb(189 218 38 / 0.34), rgb(189 218 38 / 0.1) 55%, transparent 100%),
+      radial-gradient(40% 10% at 50% 92%, rgb(189 218 38 / 0.2), transparent 100%);
+    filter: blur(28px);
   }
 
   .hero-visual :global(.hero-pixels) {
@@ -142,8 +152,9 @@ import mascot from '../assets/mascot/mascot-2d.jpg';
   }
 
   .mascot {
+    flex: none;
     height: 100%;
-    aspect-ratio: 624 / 1220;
+    aspect-ratio: 522 / 1186;
     transform: translate(calc(var(--px) * 12px), calc(var(--py) * 8px));
     transition: transform 600ms var(--ease-out);
   }
@@ -156,16 +167,9 @@ import mascot from '../assets/mascot/mascot-2d.jpg';
   .mascot :global(img) {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    /* Мягко растворяем края картинки в чёрном фоне. */
-    -webkit-mask-image:
-      linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%),
-      linear-gradient(to bottom, transparent 0%, #000 10%, #000 74%, transparent 100%);
-    -webkit-mask-composite: source-in;
-    mask-image:
-      linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%),
-      linear-gradient(to bottom, transparent 0%, #000 10%, #000 74%, transparent 100%);
-    mask-composite: intersect;
+    object-fit: contain;
+    /* Лёгкая тень и лаймовый контровой свет вокруг фигуры. */
+    filter: drop-shadow(0 0 22px rgb(189 218 38 / 0.18)) drop-shadow(0 18px 24px rgb(0 0 0 / 0.5));
   }
 
   /* Один момент при загрузке: свечение разгорается, маскот плавно поднимается. */
@@ -190,13 +194,18 @@ import mascot from '../assets/mascot/mascot-2d.jpg';
   }
 
   @media (max-width: 900px) {
+    .hero {
+      padding-block-start: var(--space-6);
+    }
     .hero-grid {
       grid-template-columns: 1fr;
-      min-height: 0;
       gap: var(--space-4);
     }
+    .hero-copy {
+      padding-block-end: 0;
+    }
     .hero-visual {
-      height: clamp(380px, 110vw, 520px);
+      height: clamp(400px, 115vw, 540px);
     }
   }
 </style>

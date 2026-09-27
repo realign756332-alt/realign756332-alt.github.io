@@ -1,16 +1,18 @@
 ---
-import { whyPoints } from '../data/home';
+import { useTranslations } from '../i18n';
+
+const t = useTranslations(Astro.currentLocale).why;
 ---
 
 <section class="section" id="why" aria-labelledby="why-title">
   <div class="container why">
     <div class="why-head">
-      <h2 id="why-title">Why BitEon</h2>
-      <p class="muted">A small studio with simple rules for every app we ship.</p>
+      <h2 id="why-title">{t.title}</h2>
+      <p class="muted">{t.lead}</p>
     </div>
     <ul class="why-list" role="list">
       {
-        whyPoints.map((p) => (
+        t.points.map((p) => (
           <li>
             <span class="why-pixel" aria-hidden="true" />
             <h3>{p.title}</h3>
@@ -63,7 +65,7 @@ import { whyPoints } from '../data/home';
     box-shadow:
       14px 0 0 -2px rgb(189 218 38 / 0.5),
       24px -6px 0 -3px rgb(189 218 38 / 0.3);
-    margin-bottom: var(--space-3);
+    margin-block-end: var(--space-3);
   }
 
   .why-list h3 {
