@@ -1,0 +1,105 @@
+---
+import { getActiveCategories, categoryHref } from '../lib/apps';
+import { sections } from '../data/site';
+
+const categories = await getActiveCategories();
+const icons = import.meta.glob<{ default: (props: Record<string, unknown>) => unknown }>('../assets/categories/*.svg', {
+  eager: true,
+});
+const iconFor = (slug: string) => icons[`../assets/categories/${slug}.svg`]?.default;
+---
+
+{
+  categories.length > 0 && (
+    <section class="section" id="categories" aria-labelledby="categories-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="categories-title">Browse by category</h2>
+        </div>
+        <ul class="cat-row" role="list">
+          {categories.map((c) => {
+            const Icon = iconFor(c.slug);
+            const Tag = sections.categories ? 'a' : 'div';
+            return (
+              <li id={`category-${c.slug}`}>
+                <Tag class="cat" {...(sections.categories ? { href: categoryHref(c.slug) } : {})}>
+                  {Icon && <Icon class="cat-icon" width={64} height={64} />}
+                  <h3>{c.name}</h3>
+                  <p>{c.summary}</p>
+                  <span class="cat-count">
+                    {c.count} {c.count === 1 ? 'app' : 'apps'}
+                  </span>
+                </Tag>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .cat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(13rem, calc(50% - var(--space-2))), 1fr));
+    gap: var(--space-4);
+  }
+
+  .cat {
+    display: grid;
+    gap: var(--space-2);
+    height: 100%;
+    padding: var(--space-5);
+    border-radius: var(--radius);
+    background: linear-gradient(180deg, var(--surface) 0%, rgb(10 25 38 / 0.35) 100%);
+    border: 1px solid var(--line);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      border-color var(--dur) ease,
+      background-color var(--dur) ease,
+      transform var(--dur) var(--ease-out);
+  }
+
+  a.cat:hover {
+    border-color: rgb(189 218 38 / 0.45);
+    transform: translateY(-2px);
+  }
+
+  .cat :global(.cat-icon) {
+    margin-bottom: var(--space-3);
+    filter: drop-shadow(0 6px 14px rgb(189 218 38 / 0.18));
+  }
+
+  .cat h3 {
+    font-size: var(--fs-h3);
+  }
+
+  .cat p {
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+  }
+
+  .cat-count {
+    margin-top: var(--space-2);
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+  }
+</style>
+
+<style>
+  @media (max-width: 560px) {
+    .cat-row {
+      gap: var(--space-3);
+    }
+    .cat {
+      padding: var(--space-4);
+    }
+    .cat :global(.cat-icon) {
+      width: 48px;
+      height: 48px;
+      margin-bottom: var(--space-1);
+    }
+  }
+</style>

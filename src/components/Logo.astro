@@ -1,0 +1,42 @@
+---
+// Логотип «B» из src/assets/logo.svg. Цвет наследуется от текста (currentColor):
+// лаймовый на чёрном, тёмно-синий на лаймовом.
+import raw from '../assets/logo.svg?raw';
+
+interface Props {
+  class?: string;
+  /** Высота значка в px */
+  size?: number;
+  /** Показывать название «BitEon Studio» рядом со значком */
+  wordmark?: boolean;
+}
+
+const { class: className, size = 32, wordmark = false } = Astro.props;
+// У каждого логотипа на странице должен быть свой id сетки, иначе браузер их путает.
+const uid = `bg-${Math.random().toString(36).slice(2, 8)}`;
+const svg = raw
+  .replaceAll('biteon-grid', uid)
+  .replace('role="img" aria-label="BitEon Studio"', wordmark ? 'aria-hidden="true"' : 'role="img" aria-label="BitEon Studio"')
+  .replace('<svg ', `<svg height="${size}" width="${Math.round((size * 920) / 950)}" `);
+---
+
+<span class:list={['logo', className]}>
+  <Fragment set:html={svg} />
+  {wordmark && <span class="logo-name">BitEon Studio</span>}
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    color: var(--accent);
+  }
+  .logo-name {
+    color: var(--text);
+    font-weight: 700;
+    font-size: 1.125rem;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+</style>

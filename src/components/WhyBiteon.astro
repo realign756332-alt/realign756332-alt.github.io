@@ -1,0 +1,90 @@
+---
+import { whyPoints } from '../data/home';
+---
+
+<section class="section" id="why" aria-labelledby="why-title">
+  <div class="container why">
+    <div class="why-head">
+      <h2 id="why-title">Why BitEon</h2>
+      <p class="muted">A small studio with simple rules for every app we ship.</p>
+    </div>
+    <ul class="why-list" role="list">
+      {
+        whyPoints.map((p) => (
+          <li>
+            <span class="why-pixel" aria-hidden="true" />
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .why {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: var(--space-7);
+  }
+
+  .why-head {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+  }
+
+  .why-head h2 {
+    font-size: var(--fs-h2);
+  }
+
+  .why-head p {
+    font-size: var(--fs-lead);
+  }
+
+  .why-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-7) var(--space-6);
+  }
+
+  .why-list li {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+  }
+
+  /* Маленький «пиксель» — отсылка к фирменному мотиву. */
+  .why-pixel {
+    width: 10px;
+    height: 10px;
+    background: var(--accent);
+    box-shadow:
+      14px 0 0 -2px rgb(189 218 38 / 0.5),
+      24px -6px 0 -3px rgb(189 218 38 / 0.3);
+    margin-bottom: var(--space-3);
+  }
+
+  .why-list h3 {
+    font-size: var(--fs-h3);
+  }
+
+  .why-list p {
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 860px) {
+    .why {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .why-list {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+  }
+</style>

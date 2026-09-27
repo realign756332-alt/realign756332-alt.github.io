@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import CategoryRow from '../components/CategoryRow.astro';
+import FeaturedApps from '../components/FeaturedApps.astro';
+import WhyBiteon from '../components/WhyBiteon.astro';
+import Faq from '../components/Faq.astro';
+import JsonLd from '../components/JsonLd.astro';
+import { site } from '../data/site';
+import { homeFaq } from '../data/home';
+
+const siteUrl = new URL('/', Astro.site).href;
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${siteUrl}#organization`,
+  name: site.name,
+  url: siteUrl,
+  logo: new URL('/icon-512.png', Astro.site).href,
+  description: site.description,
+  founder: { '@type': 'Person', name: site.founder, jobTitle: 'Founder' },
+  ...(site.youtubeUrl ? { sameAs: [site.youtubeUrl] } : {}),
+};
+
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${siteUrl}#website`,
+  name: site.name,
+  url: siteUrl,
+  inLanguage: 'en',
+  publisher: { '@id': `${siteUrl}#organization` },
+};
+---
+
+<BaseLayout
+  title="BitEon Studio — Mobile and Web Apps That Just Work"
+  description="BitEon Studio makes focused iPhone, Android and web apps. Clear prices, no tracking, installs from the App Store, Google Play or your browser."
+  imageAlt="BitEon Studio logo on a lime background"
+>
+  <JsonLd slot="head" data={[organization, website]} />
+  <Hero />
+  <CategoryRow />
+  <FeaturedApps />
+  <WhyBiteon />
+  <Faq
+    title="Buying, payment and support"
+    intro="Short answers to what people ask before they buy."
+    items={homeFaq}
+  />
+</BaseLayout>
