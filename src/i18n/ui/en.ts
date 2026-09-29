@@ -1,142 +1,157 @@
 // Английские тексты сайта — основа для всех остальных языков.
+// Источник истины для текстов — site-copy.md в корне репозитория: английский и русский берутся
+// оттуда дословно, остальные языки переводятся по смыслу в том же стиле.
 // Каждый файл src/i18n/ui/<язык>.ts повторяет эту структуру; если какой-то строки
 // не хватает, сборка (npm run check) покажет ошибку.
-// {n}, {lang} и т. п. — подстановки, их переводить не нужно.
+// {n}, {price}, {year}, {language} и т. п. — подстановки, их переводить не нужно.
 
 const en = {
   meta: {
-    homeTitle: 'BitEon Studio — Mobile and Web Apps That Just Work',
+    homeTitle: 'BitEon Studio — Your Productivity Ecosystem',
     homeDescription:
-      'BitEon Studio makes focused iPhone, Android and web apps. Clear prices, no tracking, installs from the App Store, Google Play or your browser.',
+      'Discover the BitEon Studio ecosystem of mobile and web apps, built to expand what you can do and take your productivity to a new level.',
     homeImageAlt: 'BitEon Studio logo on a lime background',
     notFoundTitle: 'Page not found — BitEon Studio',
-    notFoundDescription: 'This page does not exist. Search the BitEon Studio app catalog or go to the main sections.',
-    siteDescription:
-      'BitEon Studio makes focused mobile and web apps. Each one does one job well, shows its price up front and installs from the App Store, Google Play or your browser.',
+    notFoundDescription: 'The page may have moved or no longer exists.',
   },
   a11y: {
     skipToContent: 'Skip to content',
     homeLink: 'BitEon Studio, home',
     mainNav: 'Main',
     footerNav: 'Footer',
-    openMenu: 'Open menu',
-    closeMenu: 'Close menu',
+    openMenu: 'Menu',
+    closeMenu: 'Close',
   },
   nav: {
     apps: 'Apps',
-    categories: 'Categories',
-    why: 'Why BitEon',
-    faq: 'FAQ',
-    cta: 'Browse apps',
+    new: 'New',
+    principles: 'Principles',
+    faq: 'Questions',
+    cta: 'Explore apps',
   },
   language: {
     label: 'Language',
     change: 'Change language. Current: {lang}',
-    // Подсказка показывается на языке, который она предлагает.
-    hint: 'This page is also available in English.',
-    hintAction: 'Read in English',
-    hintClose: 'Close',
+    // Подсказка показывается на языке, который она предлагает. {language} — название этого языка.
+    hint: 'This page is also available in {language}.',
+    hintAction: 'Switch',
+    hintClose: 'Dismiss',
   },
   hero: {
-    title: 'Apps that just work',
-    lead: 'BitEon Studio makes focused mobile and web apps. Each one does one job well, shows its price up front and stays out of your way.',
-    primary: 'Browse apps',
-    secondary: 'How buying works',
+    title: 'Your productivity ecosystem.',
+    lead: 'Discover the BitEon Studio ecosystem of apps, built to expand what you can do. Innovative web services and mobile software that adapt to your rhythm of life and take your personal productivity to a whole new level.',
+    primary: 'Explore apps',
+    secondary: "What's new",
     mascotAlt:
       'The BitEon Studio mascot: a young woman with long navy hair and a lime streak, in a navy polo with a lime B logo, standing with her hands in her pockets.',
   },
   categories: {
-    title: 'Browse by category',
+    title: 'Find your app.',
     // Формы множественного числа по правилам языка (Intl.PluralRules): zero, one, two, few, many, other.
     count: { one: '{n} app', other: '{n} apps' } as Plural,
     items: {
-      productivity: { name: 'Productivity', summary: 'Plan, focus and get things done.' },
-      finance: { name: 'Finance', summary: 'Track money without spreadsheets.' },
-      utilities: { name: 'Utilities', summary: 'Small tools for everyday jobs.' },
-      lifestyle: { name: 'Lifestyle', summary: 'Habits, health and daily routine.' },
-      creativity: { name: 'Creativity', summary: 'Make images, colors and ideas.' },
+      productivity: {
+        name: 'Productivity',
+        slogan: 'Focus on what matters.',
+        text: 'Manage your time and reach your goals without the hassle.',
+      },
+      finance: {
+        name: 'Finance',
+        slogan: 'Your money, fully under control.',
+        text: 'Simple, clear budgeting without complicated spreadsheets.',
+      },
+      utilities: {
+        name: 'Utilities',
+        slogan: 'Quiet helpers.',
+        text: 'Elegant solutions for quick everyday tasks.',
+      },
+      creativity: {
+        name: 'Creativity',
+        slogan: 'Freedom to create.',
+        text: 'Tools for designers, writers and digital content creators.',
+      },
     },
   },
-  apps: {
-    featuredTitle: 'Featured apps',
-    featuredLead: 'Pick an app, see the price, install it in one step.',
-    upcomingTitle: 'Apps on the way',
-    upcomingLead: 'Our first apps are in the works. Here is what they will do.',
-    example: 'Example',
+  releases: {
+    title: 'New releases.',
+    lead: 'Fresh creative solutions are already here.',
+    available: 'Available',
     comingSoon: 'Coming soon',
+  },
+  apps: {
     typeMobile: 'Mobile',
-    typeWeb: 'Web app',
-    platformWeb: 'Web',
-    appStore: 'Get on App Store',
-    googlePlay: 'Get on Google Play',
+    typeWeb: 'Web',
+    appStore: 'Get on the App Store',
+    googlePlay: 'Get it on Google Play',
     openApp: 'Open app',
     appLanguages: 'App languages:',
     priceFree: 'Free',
-    priceFreemium: 'Free + in-app',
-    priceFreemiumPro: 'Free, Pro {price}',
+    priceFrom: 'From {price}',
     perMonth: '{price} / month',
     perYear: '{price} / year',
   },
-  why: {
-    title: 'Why BitEon',
-    lead: 'A small studio with simple rules for every app we ship.',
+  principles: {
+    title: 'BitEon principles.',
+    lead: 'We build software the way we would want it built for ourselves.',
     points: [
-      { title: 'One job, done well', text: 'Each app solves one clear problem. No feature piles, no settings maze.' },
-      { title: 'Clear prices', text: 'Every app shows its price up front, before you buy.' },
       {
-        title: 'No tracking on this site',
-        text: "No ad trackers and no cookie banners. Each app's privacy policy explains exactly what data it uses.",
+        title: 'One goal: the perfect result',
+        text: "We don't try to do everything at once. Our apps hit the target precisely, delivering maximum speed and simplicity.",
       },
-      { title: 'Built by a real person', text: 'Alex, the founder, builds every app and reads every support message.' },
+      {
+        title: 'Customer-centric approach',
+        text: 'We shape our products around real user experience. Every piece of feedback informs our updates, making the software better with each release.',
+      },
+      {
+        title: 'Instant results',
+        text: 'Our interfaces are designed so you finish your task in as few clicks as possible. No learning curve — open it and get results right away.',
+      },
+      {
+        title: 'Respect for your time',
+        text: 'No complicated instructions, long sign-ups or confusing flows. Our products are built to be useful from the very first second.',
+      },
     ],
   },
   faq: {
-    title: 'Buying, payment and support',
-    intro: 'Short answers to what people ask before they buy.',
-    // FAQ главной: покупка, оплата, поддержка, возвраты. Ответы короткие и прямые.
+    title: 'Questions.',
+    intro: 'Buying, installing and using BitEon apps.',
     items: [
       {
-        q: 'How do I buy a mobile app?',
-        a: 'Mobile apps are sold through the App Store and Google Play. Apple and Google handle payment and downloads under their own rules.',
+        q: 'How do I get a BitEon app?',
+        a: "Mobile apps are available on the App Store and Google Play. Web apps open right in your browser — the link is on each app's page.",
       },
-      { q: 'How do I pay for a web app?', a: 'Payment terms for each web app will be listed on that app’s page.' },
+      { q: 'How much do the apps cost?', a: 'Each app page shows its price and plan options before you buy.' },
       {
-        q: 'Can I get a refund?',
-        a: 'Refunds for mobile apps follow App Store and Google Play rules: request them from Apple or Google. Refund terms for each web app will be listed on that app’s page.',
+        q: 'Which devices are supported?',
+        a: "It depends on the app. Supported platforms are listed on each app's page.",
       },
-      {
-        q: 'How do I get support?',
-        a: 'Use the support link inside the app or on the app’s page on this site. Your message goes straight to the developer.',
-      },
-      {
-        q: 'Which devices do the apps work on?',
-        a: 'Each app’s page lists its platforms: iPhone, Android or any modern web browser.',
-      },
+      { q: 'Which languages do the apps support?', a: 'Each app page lists the languages available in the app.' },
+      { q: 'How do I contact support?', a: "Use the support link inside the app or on the app's page." },
     ],
   },
   footer: {
-    tagline: 'Focused mobile and web apps, made by one small studio.',
+    tagline: 'Your productivity ecosystem.',
     apps: 'Apps',
-    categories: 'Categories',
-    tools: 'Tools',
-    allTools: 'All free tools',
-    faq: 'FAQ',
-    buyingRefunds: 'Buying & refunds',
+    allApps: 'All apps',
+    mobileApps: 'Mobile apps',
+    webApps: 'Web apps',
+    support: 'Support',
+    helpFaq: 'Help & FAQ',
+    contact: 'Contact us',
     company: 'Company',
-    about: 'About',
-    contact: 'Contact',
-    privacy: 'Privacy',
-    terms: 'Terms',
-    refundPolicy: 'Refund policy',
+    about: 'About BitEon',
+    legal: 'Legal',
+    privacy: 'Privacy Policy',
+    terms: 'Terms of Use',
+    rights: '© {year} BitEon Studio. All rights reserved.',
   },
   notFound: {
-    title: 'This page doesn’t exist',
-    lead: 'The link may be old or mistyped. Find an app below or go to a main section.',
-    searchLabel: 'Search apps',
-    searchPlaceholder: 'App name or what it does',
-    noResults: 'No apps match that search.',
-    sections: 'Main sections',
-    home: 'Home',
+    title: 'Page not found.',
+    lead: 'The page may have moved or no longer exists.',
+    home: 'Back to home',
+    explore: 'Explore apps',
+    searchPlaceholder: 'Search apps',
+    noResults: 'Nothing found. Try another word.',
   },
 };
 

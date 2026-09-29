@@ -1,45 +1,47 @@
 ---
-import { getActiveCategories, categoryHref } from '../lib/apps';
+// Ряд категорий на главной. Карточка: название, слоган (жирнее), описание.
+// Счётчик приложений показывается, только если в категории есть реальные приложения.
+import { getCategoriesWithCounts, categoryHref } from '../lib/apps';
 import { sections } from '../data/site';
 import { useTranslations, plural } from '../i18n';
 
 const locale = Astro.currentLocale ?? 'en';
 const t = useTranslations(locale).categories;
 
-const categories = await getActiveCategories();
+const categories = await getCategoriesWithCounts();
 const icons = import.meta.glob<{ default: (props: Record<string, unknown>) => unknown }>('../assets/categories/*.svg', {
   eager: true,
 });
 const iconFor = (slug: string) => icons[`../assets/categories/${slug}.svg`]?.default;
 ---
 
-{
-  categories.length > 0 && (
-    <section class="section" id="categories" aria-labelledby="categories-title">
-      <div class="container">
-        <div class="section-head">
-          <h2 id="categories-title">{t.title}</h2>
-        </div>
-        <ul class="cat-row" role="list">
-          {categories.map((c) => {
-            const Icon = iconFor(c.slug);
-            const Tag = sections.categories ? 'a' : 'div';
-            return (
-              <li id={`category-${c.slug}`}>
-                <Tag class="cat" {...(sections.categories ? { href: categoryHref(c.slug, locale) } : {})}>
-                  {Icon && <Icon class="cat-icon" width={64} height={64} />}
-                  <h3>{t.items[c.slug].name}</h3>
-                  <p>{t.items[c.slug].summary}</p>
-                  <span class="cat-count">{plural(locale, t.count, c.count)}</span>
-                </Tag>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    </section>
-  )
-}
+<section class="section" id="categories" aria-labelledby="categories-title">
+  <div class="container">
+    <div class="section-head">
+      <h2 id="categories-title">{t.title}</h2>
+    </div>
+    <ul class="cat-row" role="list">
+      {categories.map((c) => {
+        const Icon = iconFor(c.slug);
+        const item = t.items[c.slug];
+        const Tag = sections.categories && c.count > 0 ? 'a' : 'div';
+        return (
+          <li id={`category-${c.slug}`}>
+            <Tag class="cat" {...(Tag === 'a' ? { href: categoryHref(c.slug, locale) } : {})}>
+              {Icon && <Icon class="cat-icon" width={64} height={64} />}
+              <div class="cat-body">
+                <h3>{item.name}</h3>
+                <p class="cat-slogan">{item.slogan}</p>
+                <p class="cat-text">{item.text}</p>
+                {c.count > 0 && <span class="cat-count">{plural(locale, t.count, c.count)}</span>}
+              </div>
+            </Tag>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</section>
 
 <style>
   .cat-row {
@@ -49,8 +51,8 @@ const iconFor = (slug: string) => icons[`../assets/categories/${slug}.svg`]?.def
   }
 
   .cat {
-    display: grid;
-    gap: var(--space-2);
+    display: flex;
+    flex-direction: column;
     height: 100%;
     padding: var(--space-5);
     border-radius: var(--radius);
@@ -70,8 +72,15 @@ const iconFor = (slug: string) => icons[`../assets/categories/${slug}.svg`]?.def
   }
 
   .cat :global(.cat-icon) {
-    margin-block-end: var(--space-3);
+    flex: none;
+    margin-block-end: var(--space-5);
     filter: drop-shadow(0 6px 14px rgb(189 218 38 / 0.18));
+  }
+
+  .cat-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
   }
 
   .cat h3 {
@@ -81,30 +90,48 @@ const iconFor = (slug: string) => icons[`../assets/categories/${slug}.svg`]?.def
     overflow-wrap: anywhere;
   }
 
-  .cat p {
+  /* Слоган — второй уровень: светлее и жирнее описания, но тише названия. */
+  .cat-slogan {
+    margin-block-start: var(--space-2);
+    font-size: var(--fs-body);
+    font-weight: 600;
+    line-height: var(--lh-heading);
+    color: var(--text);
+  }
+
+  .cat-text {
+    margin-block-start: var(--space-2);
     color: var(--text-muted);
     font-size: var(--fs-small);
   }
 
   .cat-count {
-    margin-block-start: var(--space-2);
+    /* Счётчик прижат к низу карточки — в ряду они стоят на одной линии. */
+    margin-block-start: auto;
+    padding-block-start: var(--space-4);
     font-size: var(--fs-xs);
     color: var(--text-muted);
   }
 </style>
 
 <style>
+  /* На телефоне — одна колонка, иконка сбоку: длинные названия («Продуктивность», «Kreativität»)
+     помещаются целиком, без переносов посреди слова. */
   @media (max-width: 560px) {
     .cat-row {
+      grid-template-columns: 1fr;
       gap: var(--space-3);
     }
     .cat {
-      padding: var(--space-4);
+      flex-direction: row;
+      align-items: flex-start;
+      gap: var(--space-4);
+      padding: var(--space-4) var(--space-5);
     }
     .cat :global(.cat-icon) {
       width: 48px;
       height: 48px;
-      margin-block-end: var(--space-1);
+      margin-block-end: 0;
     }
   }
 </style>

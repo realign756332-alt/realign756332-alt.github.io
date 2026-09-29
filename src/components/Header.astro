@@ -1,17 +1,21 @@
 ---
 import Logo from './Logo.astro';
 import LanguageSwitcher from './LanguageSwitcher.astro';
-import { mainNav, headerCta } from '../data/navigation';
+import { visibleNav, headerCta } from '../data/navigation';
+import { hasPublicApps } from '../lib/apps';
 import { localizePath, useTranslations } from '../i18n';
 
 const locale = Astro.currentLocale ?? 'en';
 const t = useTranslations(locale);
-const nav = mainNav.map((item) => ({ label: t.nav[item.key], href: localizePath(item.href, locale) }));
+const nav = visibleNav(await hasPublicApps()).map((item) => ({
+  label: t.nav[item.key],
+  href: localizePath(item.href, locale),
+}));
 const cta = { label: t.nav[headerCta.key], href: localizePath(headerCta.href, locale) };
 const home = localizePath('/', locale);
 ---
 
-<header class="site-header">
+<header class="site-header" data-site-header>
   <div class="container header-inner">
     <a href={home} class="brand" aria-label={t.a11y.homeLink}>
       <Logo size={32} wordmark />
@@ -62,6 +66,29 @@ const home = localizePath('/', locale);
   // Закрываем мобильное меню после перехода по якорю на той же странице.
   const menu = document.getElementById('mobile-menu');
   menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.hidePopover?.()));
+
+  // Как только страница прокручена, шапка получает тёмный полупрозрачный фон с размытием,
+  // чтобы контент не просвечивал под логотипом и меню. Без JavaScript фон есть всегда.
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  if (header) {
+    header.dataset.js = '';
+    let ticking = false;
+    const update = () => {
+      header.toggleAttribute('data-scrolled', window.scrollY > 4);
+      ticking = false;
+    };
+    update();
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true },
+    );
+  }
 </script>
 
 <style>
@@ -70,26 +97,27 @@ const home = localizePath('/', locale);
     inset-block-start: 0;
     z-index: 50;
     height: var(--header-h);
-    background: rgb(0 0 0 / 0.72);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-block-end: 1px solid transparent;
+    border-block-end: 1px solid var(--line);
+    /* Тёмный полупрозрачный фон (фирменный тёмно-синий, почти чёрный) + размытие того, что под ним. */
+    --header-blur: blur(20px) saturate(140%);
+    background: rgb(4 12 19 / 0.86);
+    backdrop-filter: var(--header-blur);
+    transition:
+      background-color var(--dur) ease,
+      border-color var(--dur) ease;
   }
 
-  /* При прокрутке шапка становится фирменной тёмно-синей — без JavaScript. */
-  @supports (animation-timeline: scroll()) {
-    .site-header {
-      background: rgb(0 0 0 / 0);
-      animation: header-solid linear both;
-      animation-timeline: scroll(root);
-      animation-range: 0 120px;
-    }
-    @keyframes header-solid {
-      to {
-        background: rgb(10 25 38 / 0.9);
-        border-block-end-color: var(--line);
-      }
-    }
+  /* Для Safari до 18 — версия с префиксом. Отдельным правилом: если написать оба свойства рядом,
+     сборщик CSS оставляет только одно из них (раньше из-за этого в Chrome размытия не было вовсе). */
+  header.site-header {
+    -webkit-backdrop-filter: var(--header-blur);
+  }
+
+  /* На самом верху страницы (скрипт это отмечает) шапка прозрачная — первый экран «дышит». */
+  .site-header[data-js]:not([data-scrolled]) {
+    --header-blur: none;
+    background: rgb(0 0 0 / 0);
+    border-block-end-color: transparent;
   }
 
   .header-inner {

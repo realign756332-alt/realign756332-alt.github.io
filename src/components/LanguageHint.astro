@@ -2,13 +2,24 @@
 // Ненавязчивая подсказка: «Эта страница есть на вашем языке». Никаких автоматических
 // переходов — человек сам решает. Закрыл один раз — больше не показываем (localStorage).
 // Без JavaScript подсказки просто нет.
-import { locales, getLocaleInfo, localizePath, useTranslations } from '../i18n';
+import { locales, getLocaleInfo, localizePath, useTranslations, fill } from '../i18n';
 
 const current = getLocaleInfo(Astro.currentLocale).code;
 const hints = Object.fromEntries(
   locales.map((l) => {
     const t = useTranslations(l.code).language;
-    return [l.code, { text: t.hint, action: t.hintAction, close: t.hintClose, dir: l.dir, href: localizePath(Astro.url.pathname, l.code) }];
+    // Название языка на нём самом, в форме для текста: «English», «Deutsch», «русский», «ไทย».
+    const language = new Intl.DisplayNames([l.code], { type: 'language' }).of(l.code) ?? l.name;
+    return [
+      l.code,
+      {
+        text: fill(t.hint, { language }),
+        action: t.hintAction,
+        close: t.hintClose,
+        dir: l.dir,
+        href: localizePath(Astro.url.pathname, l.code),
+      },
+    ];
   }),
 );
 ---

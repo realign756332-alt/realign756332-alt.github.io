@@ -2,10 +2,13 @@
 import { Picture } from 'astro:assets';
 import PixelScatter from './PixelScatter.astro';
 import mascot from '../assets/mascot/mascot-2d.png';
+import { hasPublicApps } from '../lib/apps';
 import { localizePath, useTranslations } from '../i18n';
 
 const locale = Astro.currentLocale ?? 'en';
 const t = useTranslations(locale).hero;
+// «What's new» ведёт к блоку новинок, поэтому показывается только вместе с ним.
+const showNew = await hasPublicApps();
 ---
 
 <section class="hero" aria-labelledby="hero-title">
@@ -14,11 +17,11 @@ const t = useTranslations(locale).hero;
       <h1 id="hero-title">{t.title}</h1>
       <p class="hero-lead">{t.lead}</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href={localizePath('/#apps', locale)}>
+        <a class="btn btn-primary" href={localizePath('/#categories', locale)}>
           {t.primary}
           <svg class="icon-dir" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 14 14 6M7 6h7v7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
         </a>
-        <a class="btn btn-outline" href={localizePath('/#faq', locale)}>{t.secondary}</a>
+        {showNew && <a class="btn btn-outline" href={localizePath('/#new', locale)}>{t.secondary}</a>}
       </div>
     </div>
 
@@ -100,6 +103,10 @@ const t = useTranslations(locale).hero;
     line-height: var(--lh-tight);
     font-weight: 800;
     letter-spacing: var(--tracking-display);
+    /* Длинные слова («Produktivität», «продуктивности») переносятся, а не вылезают за край. */
+    hyphens: auto;
+    overflow-wrap: break-word;
+    text-wrap: balance;
   }
 
   .hero-lead {

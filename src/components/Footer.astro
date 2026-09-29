@@ -1,10 +1,10 @@
 ---
-// Подвал собирается из данных: новые приложения, категории и разделы
-// появляются в нём автоматически.
+// Подвал: колонки Apps, Support, Company, Legal (тексты — из site-copy.md).
+// Показываются только ссылки на страницы и блоки, которые уже существуют:
+// когда раздел готов (sections в src/data/site.ts), его ссылки появляются здесь сами.
 import Logo from './Logo.astro';
 import { site, sections } from '../data/site';
-import { getPublicApps, getActiveCategories, appHref, categoryHref } from '../lib/apps';
-import { localizePath, useTranslations } from '../i18n';
+import { fill, localizePath, useTranslations } from '../i18n';
 
 type Link = { label: string; href: string; external?: boolean };
 
@@ -13,37 +13,39 @@ const t = useTranslations(locale);
 const f = t.footer;
 const to = (path: string) => localizePath(path, locale);
 
-const apps = await getPublicApps();
-const activeCategories = await getActiveCategories();
-
 const columns: { title: string; links: Link[] }[] = [
-  { title: f.apps, links: apps.map((a) => ({ label: a.data.name, href: appHref(a, locale) })) },
   {
-    title: f.categories,
-    links: activeCategories.map((c) => ({ label: t.categories.items[c.slug].name, href: categoryHref(c.slug, locale) })),
+    title: f.apps,
+    links: sections.apps
+      ? [
+          { label: f.allApps, href: to('/apps/') },
+          { label: f.mobileApps, href: to('/apps/mobile/') },
+          { label: f.webApps, href: to('/apps/web/') },
+        ]
+      : [],
   },
   {
-    title: f.tools,
-    links: sections.tools ? [{ label: f.allTools, href: to('/tools/') }] : [],
-  },
-  {
-    title: f.faq,
-    links: [{ label: f.buyingRefunds, href: to(sections.faq ? '/faq/' : '/#faq') }],
+    title: f.support,
+    links: [
+      { label: f.helpFaq, href: to(sections.faq ? '/faq/' : '/#faq') },
+      ...(sections.company ? [{ label: f.contact, href: to('/contact/') }] : []),
+    ],
   },
   {
     title: f.company,
     links: [
-      ...(sections.company
-        ? [
-            { label: f.about, href: to('/about/') },
-            { label: f.contact, href: to('/contact/') },
-            { label: f.privacy, href: to('/privacy/') },
-            { label: f.terms, href: to('/terms/') },
-            { label: f.refundPolicy, href: to('/refund-policy/') },
-          ]
-        : []),
+      ...(sections.company ? [{ label: f.about, href: to('/about/') }] : []),
       ...(site.youtubeUrl ? [{ label: 'YouTube', href: site.youtubeUrl, external: true }] : []),
     ],
+  },
+  {
+    title: f.legal,
+    links: sections.company
+      ? [
+          { label: f.privacy, href: to('/privacy/') },
+          { label: f.terms, href: to('/terms/') },
+        ]
+      : [],
   },
 ].filter((col) => col.links.length > 0);
 
@@ -80,7 +82,7 @@ const year = new Date().getFullYear();
   </div>
 
   <div class="container footer-bottom">
-    <p>© {year} BitEon Studio</p>
+    <p>{fill(f.rights, { year })}</p>
   </div>
 </footer>
 
