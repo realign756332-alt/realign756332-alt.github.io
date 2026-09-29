@@ -189,6 +189,7 @@
 | Free | Бесплатно |
 | From {price} | От {price} |
 | {price} / month | {price} / мес. |
+| {price} / year | {price} / год |
 | App languages: | Языки приложения: |
 | Get on the App Store / Get it on Google Play | официальные бейджи магазинов |
 | Open app | Открыть приложение |

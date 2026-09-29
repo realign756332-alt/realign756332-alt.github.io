@@ -2,17 +2,13 @@
 // Страница «не найдено». Один шаблон на все языки: src/pages/404.astro и src/pages/[locale]/404.astro.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getPublicApps, appHref, appText } from '../lib/apps';
-import { mainNav } from '../data/navigation';
+import { headerCta } from '../data/navigation';
 import { defaultLocale, nonDefaultLocales, localizePath, useTranslations } from '../i18n';
 
 const locale = Astro.currentLocale ?? defaultLocale;
 const t = useTranslations(locale);
 const n = t.notFound;
 const apps = await getPublicApps();
-const sectionLinks = [
-  { label: n.home, href: localizePath('/', locale) },
-  ...mainNav.map((item) => ({ label: t.nav[item.key], href: localizePath(item.href, locale) })),
-];
 ---
 
 <BaseLayout title={t.meta.notFoundTitle} description={t.meta.notFoundDescription} noindex>
@@ -36,8 +32,13 @@ const sectionLinks = [
     <h1>{n.title}</h1>
     <p class="muted nf-lead">{n.lead}</p>
 
+    <div class="nf-actions">
+      <a class="btn btn-primary" href={localizePath('/', locale)}>{n.home}</a>
+      <a class="btn btn-outline" href={localizePath(headerCta.href, locale)}>{n.explore}</a>
+    </div>
+
     <form class="nf-search" role="search" action={localizePath('/', locale)} method="get" data-app-search>
-      <label for="app-search">{n.searchLabel}</label>
+      <label for="app-search" class="visually-hidden">{n.searchPlaceholder}</label>
       <input id="app-search" name="q" type="search" placeholder={n.searchPlaceholder} autocomplete="off" />
     </form>
 
@@ -57,14 +58,7 @@ const sectionLinks = [
         })
       }
     </ul>
-    <p class="muted" data-no-results hidden>{n.noResults}</p>
-
-    <nav aria-labelledby="nf-sections" class="nf-links">
-      <h2 id="nf-sections">{n.sections}</h2>
-      <ul role="list">
-        {sectionLinks.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
-      </ul>
-    </nav>
+    <p class="muted" data-no-results role="status" hidden>{n.noResults}</p>
   </section>
 </BaseLayout>
 
@@ -82,7 +76,8 @@ const sectionLinks = [
       li.hidden = !match;
       if (match) shown++;
     });
-    if (empty) empty.hidden = shown > 0;
+    // «Ничего не найдено» — только когда человек что-то ввёл и совпадений нет.
+    if (empty) empty.hidden = !q || shown > 0;
   };
   input?.addEventListener('input', filter);
   form?.addEventListener('submit', (e) => {
@@ -115,14 +110,15 @@ const sectionLinks = [
     font-size: var(--fs-lead);
   }
 
-  .nf-search {
-    display: grid;
-    gap: var(--space-2);
-    margin-block-start: var(--space-4);
+  .nf-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
   }
 
-  .nf-search label {
-    font-weight: 600;
+  .nf-search {
+    display: grid;
+    margin-block-start: var(--space-4);
   }
 
   .nf-search input {
@@ -147,20 +143,5 @@ const sectionLinks = [
 
   .nf-apps a {
     font-weight: 600;
-  }
-
-  .nf-links {
-    margin-block-start: var(--space-6);
-  }
-
-  .nf-links h2 {
-    font-size: var(--fs-h3);
-    margin-block-end: var(--space-3);
-  }
-
-  .nf-links ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3) var(--space-5);
   }
 </style>

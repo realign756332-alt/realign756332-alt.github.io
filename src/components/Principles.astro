@@ -1,20 +1,21 @@
 ---
+// Блок «Принципы BitEon»: заголовок и вступление слева, четыре пункта с пиксельными иконками справа.
 import { useTranslations } from '../i18n';
 
-const t = useTranslations(Astro.currentLocale).why;
+const t = useTranslations(Astro.currentLocale).principles;
 ---
 
-<section class="section" id="why" aria-labelledby="why-title">
-  <div class="container why">
-    <div class="why-head">
-      <h2 id="why-title">{t.title}</h2>
+<section class="section" id="principles" aria-labelledby="principles-title">
+  <div class="container principles">
+    <div class="principles-head">
+      <h2 id="principles-title">{t.title}</h2>
       <p class="muted">{t.lead}</p>
     </div>
-    <ul class="why-list" role="list">
+    <ul class="principles-list" role="list">
       {
         t.points.map((p) => (
           <li>
-            <span class="why-pixel" aria-hidden="true" />
+            <span class="principles-pixel" aria-hidden="true" />
             <h3>{p.title}</h3>
             <p>{p.text}</p>
           </li>
@@ -25,40 +26,40 @@ const t = useTranslations(Astro.currentLocale).why;
 </section>
 
 <style>
-  .why {
+  .principles {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
     gap: var(--space-7);
   }
 
-  .why-head {
+  .principles-head {
     display: grid;
     align-content: start;
     gap: var(--space-3);
   }
 
-  .why-head h2 {
+  .principles-head h2 {
     font-size: var(--fs-h2);
   }
 
-  .why-head p {
+  .principles-head p {
     font-size: var(--fs-lead);
   }
 
-  .why-list {
+  .principles-list {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-7) var(--space-6);
   }
 
-  .why-list li {
+  .principles-list li {
     display: grid;
     gap: var(--space-2);
     align-content: start;
   }
 
   /* Маленький «пиксель» — отсылка к фирменному мотиву. */
-  .why-pixel {
+  .principles-pixel {
     width: 10px;
     height: 10px;
     background: var(--accent);
@@ -68,23 +69,23 @@ const t = useTranslations(Astro.currentLocale).why;
     margin-block-end: var(--space-3);
   }
 
-  .why-list h3 {
+  .principles-list h3 {
     font-size: var(--fs-h3);
   }
 
-  .why-list p {
+  .principles-list p {
     color: var(--text-muted);
   }
 
   @media (max-width: 860px) {
-    .why {
+    .principles {
       grid-template-columns: 1fr;
       gap: var(--space-6);
     }
   }
 
   @media (max-width: 560px) {
-    .why-list {
+    .principles-list {
       grid-template-columns: 1fr;
       gap: var(--space-6);
     }

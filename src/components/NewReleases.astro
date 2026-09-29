@@ -1,45 +1,45 @@
 ---
+// Блок «New releases» на главной. Показывается только при наличии хотя бы одного
+// реального (не примерного) приложения — вместе с ним появляются пункт меню «New» и кнопка «What's new».
 import { Image } from 'astro:assets';
 import { getPublicApps, priceLabel, platformName, appHref, appText } from '../lib/apps';
-import { getCategory } from '../data/categories';
 import { sections } from '../data/site';
 import { useTranslations, languageList } from '../i18n';
 
 const locale = Astro.currentLocale ?? 'en';
 const dict = useTranslations(locale);
 const t = dict.apps;
+const r = dict.releases;
 
 const apps = (await getPublicApps()).slice(0, 8);
-const hasLive = apps.some((a) => a.data.status === 'live');
 ---
 
 {
   apps.length > 0 && (
-    <section class="section" id="apps" aria-labelledby="apps-title">
+    <section class="section" id="new" aria-labelledby="new-title">
       <div class="container">
         <div class="section-head">
-          <h2 id="apps-title">{hasLive ? t.featuredTitle : t.upcomingTitle}</h2>
-          <p>{hasLive ? t.featuredLead : t.upcomingLead}</p>
+          <h2 id="new-title">{r.title}</h2>
+          <p>{r.lead}</p>
         </div>
 
         <ul class="app-list" role="list">
           {apps.map((app) => {
             const d = app.data;
-            const category = getCategory(d.category);
             const text = appText(app, locale);
+            const live = d.status === 'live';
             return (
               <li class="app" id={`app-${d.slug}`}>
                 <Image src={d.icon} alt="" width={64} height={64} class="app-icon" loading="lazy" draggable="false" />
                 <div class="app-main">
                   <h3>
                     {sections.apps ? <a href={appHref(app, locale)}>{d.name}</a> : d.name}
-                    {d.example && <span class="tag tag-example">{t.example}</span>}
+                    <span class:list={['tag', live ? 'tag-live' : 'tag-soon']}>{live ? r.available : r.comingSoon}</span>
                   </h3>
                   <p class="app-tagline">{text.tagline}</p>
                   <p class="app-meta">
                     <span>{d.type === 'mobile' ? t.typeMobile : t.typeWeb}</span>
                     <span>{d.platforms.map((p) => platformName(p, locale)).join(', ')}</span>
-                    {category && <span>{dict.categories.items[category.slug].name}</span>}
                     <span>{priceLabel(app, locale)}</span>
                   </p>
                   {d.appLanguages.length > 0 && (
@@ -48,18 +48,19 @@ const hasLive = apps.some((a) => a.data.status === 'live');
                     </p>
                   )}
                 </div>
-                <div class="app-action">
-                  {d.status === 'coming-soon' && <span class="tag tag-soon">{t.comingSoon}</span>}
-                  {d.status === 'live' && d.type === 'mobile' && d.appStoreUrl && (
-                    <a class="btn btn-primary btn-sm" href={d.appStoreUrl}>{t.appStore}</a>
-                  )}
-                  {d.status === 'live' && d.type === 'mobile' && d.googlePlayUrl && (
-                    <a class="btn btn-outline btn-sm" href={d.googlePlayUrl}>{t.googlePlay}</a>
-                  )}
-                  {d.status === 'live' && d.type === 'web' && d.webAppUrl && (
-                    <a class="btn btn-primary btn-sm" href={d.webAppUrl}>{t.openApp}</a>
-                  )}
-                </div>
+                {live && (
+                  <div class="app-action">
+                    {d.type === 'mobile' && d.appStoreUrl && (
+                      <a class="btn btn-primary btn-sm" href={d.appStoreUrl}>{t.appStore}</a>
+                    )}
+                    {d.type === 'mobile' && d.googlePlayUrl && (
+                      <a class="btn btn-outline btn-sm" href={d.googlePlayUrl}>{t.googlePlay}</a>
+                    )}
+                    {d.type === 'web' && d.webAppUrl && (
+                      <a class="btn btn-primary btn-sm" href={d.webAppUrl}>{t.openApp}</a>
+                    )}
+                  </div>
+                )}
               </li>
             );
           })}
@@ -161,15 +162,15 @@ const hasLive = apps.some((a) => a.data.status === 'live');
     white-space: nowrap;
   }
 
+  .tag-live {
+    color: var(--on-accent);
+    background: var(--accent);
+  }
+
   .tag-soon {
     color: var(--accent);
     background: rgb(189 218 38 / 0.1);
     border: 1px solid rgb(189 218 38 / 0.3);
-  }
-
-  .tag-example {
-    color: var(--text-muted);
-    border: 1px dashed var(--line-strong);
   }
 
   @media (max-width: 640px) {

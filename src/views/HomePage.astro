@@ -4,8 +4,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import CategoryRow from '../components/CategoryRow.astro';
-import FeaturedApps from '../components/FeaturedApps.astro';
-import WhyBiteon from '../components/WhyBiteon.astro';
+import NewReleases from '../components/NewReleases.astro';
+import Principles from '../components/Principles.astro';
 import Faq from '../components/Faq.astro';
 import JsonLd from '../components/JsonLd.astro';
 import { site } from '../data/site';
@@ -23,7 +23,7 @@ const organization = {
   name: site.name,
   url: rootUrl,
   logo: new URL('/icon-512.png', Astro.site).href,
-  description: t.meta.siteDescription,
+  description: t.meta.homeDescription,
   founder: { '@type': 'Person', name: site.founder, jobTitle: 'Founder' },
   ...(site.youtubeUrl ? { sameAs: [site.youtubeUrl] } : {}),
 };
@@ -44,7 +44,7 @@ const website = {
   <JsonLd slot="head" data={[organization, website]} />
   <Hero />
   <CategoryRow />
-  <FeaturedApps />
-  <WhyBiteon />
+  <NewReleases />
+  <Principles />
   <Faq title={t.faq.title} intro={t.faq.intro} items={t.faq.items} />
 </BaseLayout>

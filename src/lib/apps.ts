@@ -5,14 +5,23 @@ import { defaultLocale, fill, localizePath, useTranslations } from '../i18n';
 
 export type App = CollectionEntry<'apps'>;
 
-/** Все приложения, кроме черновиков. Сначала избранные, затем по дате обновления. */
+/**
+ * Приложения, которые показываются на сайте: без черновиков и без тестовых примеров
+ * (`example: true` остаются в данных для проверки шаблонов, но на сайт и в sitemap не попадают).
+ * Сначала избранные, затем по дате обновления.
+ */
 export async function getPublicApps(): Promise<App[]> {
-  const apps = await getCollection('apps', ({ data }) => data.status !== 'draft');
+  const apps = await getCollection('apps', ({ data }) => data.status !== 'draft' && !data.example);
   return apps.sort(
     (a, b) =>
       Number(b.data.featured) - Number(a.data.featured) ||
       b.data.updatedDate.getTime() - a.data.updatedDate.getTime(),
   );
+}
+
+/** Есть ли на сайте хотя бы одно реальное приложение (от этого зависят блок новинок, «New» и «What's new»). */
+export async function hasPublicApps() {
+  return (await getPublicApps()).length > 0;
 }
 
 const warned = new Set<string>();
@@ -32,12 +41,10 @@ export function appText(app: App, locale: string) {
   };
 }
 
-/** Категории, в которых есть хотя бы одно опубликованное приложение. */
-export async function getActiveCategories() {
+/** Все категории с числом реальных приложений в каждой. */
+export async function getCategoriesWithCounts() {
   const apps = await getPublicApps();
-  return categories
-    .map((c) => ({ ...c, count: apps.filter((a) => a.data.category === c.slug).length }))
-    .filter((c) => c.count > 0);
+  return categories.map((c) => ({ ...c, count: apps.filter((a) => a.data.category === c.slug).length }));
 }
 
 /** Ссылка на приложение: своя страница, когда раздел готов, иначе карточка на главной. */
@@ -49,7 +56,7 @@ export function categoryHref(slug: string, locale: string) {
   return localizePath(sections.categories ? `/category/${slug}/` : `/#categories`, locale);
 }
 
-/** Цена словами на языке страницы: «Free», «9,99 $», «$3 / month», «Free + in-app». */
+/** Цена словами на языке страницы: «Free», «9,99 $», «$3 / month», «Free · From $4.99». */
 export function priceLabel(app: App, locale: string) {
   const t = useTranslations(locale).apps;
   const { price, currency, pricingModel, billingPeriod } = app.data;
@@ -62,7 +69,8 @@ export function priceLabel(app: App, locale: string) {
     case 'free':
       return t.priceFree;
     case 'freemium':
-      return price > 0 ? fill(t.priceFreemiumPro, { price: amount }) : t.priceFreemium;
+      // Бесплатно, платная версия — от указанной цены.
+      return price > 0 ? `${t.priceFree} · ${fill(t.priceFrom, { price: amount })}` : t.priceFree;
     case 'subscription':
       return fill(billingPeriod === 'year' ? t.perYear : t.perMonth, { price: amount });
     default:
@@ -71,5 +79,5 @@ export function priceLabel(app: App, locale: string) {
 }
 
 export function platformName(platform: 'ios' | 'android' | 'web', locale: string) {
-  return platform === 'ios' ? 'iOS' : platform === 'android' ? 'Android' : useTranslations(locale).apps.platformWeb;
+  return platform === 'ios' ? 'iOS' : platform === 'android' ? 'Android' : useTranslations(locale).apps.typeWeb;
 }

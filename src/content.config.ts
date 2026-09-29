@@ -55,7 +55,7 @@ const apps = defineCollection({
         updatedDate: z.coerce.date(),
         status: z.enum(['live', 'coming-soon', 'draft']),
         featured: z.boolean().default(false),
-        // true = тестовый пример, не настоящее приложение. На сайте помечается бейджем «Example».
+        // true = тестовый пример, не настоящее приложение. Остаётся в данных, но на сайт и в sitemap не попадает.
         example: z.boolean().default(false),
       })
       .refine((a) => a.pricingModel !== 'subscription' || a.billingPeriod, {

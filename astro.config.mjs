@@ -10,6 +10,7 @@ import { buildFonts } from './src/i18n/fonts.mjs';
 const SITE = 'https://realign756332-alt.github.io';
 
 // Даты обновления для sitemap берём из поля updatedDate в файлах приложений.
+// Тестовые примеры (example: true) и черновики на сайт не попадают — их даты не учитываем.
 function readUpdatedDates() {
   const dir = new URL('./src/content/apps/', import.meta.url);
   /** @type {Record<string, Date>} */
@@ -17,6 +18,7 @@ function readUpdatedDates() {
   for (const file of readdirSync(dir)) {
     if (!file.endsWith('.md')) continue;
     const text = readFileSync(new URL(file, dir), 'utf8');
+    if (/^example:\s*true\b/m.test(text) || /^status:\s*["']?draft/m.test(text)) continue;
     const slug = text.match(/^slug:\s*["']?([\w-]+)/m)?.[1];
     const updated = text.match(/^updatedDate:\s*["']?([\d-]+)/m)?.[1];
     if (slug && updated) dates[slug] = new Date(updated);
