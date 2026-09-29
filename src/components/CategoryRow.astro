@@ -81,13 +81,13 @@ const iconFor = (slug: string) => icons[`../assets/categories/${slug}.svg`]?.def
     display: flex;
     flex-direction: column;
     flex: 1;
+    container-type: inline-size;
   }
 
   .cat h3 {
-    font-size: var(--fs-h3);
-    /* Длинные названия («Продуктивность», «Productiviteit») переносятся, а не обрезаются. */
-    hyphens: auto;
-    overflow-wrap: anywhere;
+    /* В узкой карточке название чуть мельче, чтобы длинное слово («Продуктивность»,
+       «Productiviteit») помещалось целиком, без переноса по частям. */
+    font-size: min(var(--fs-h3), 100cqi / 8.8);
   }
 
   /* Слоган — второй уровень: светлее и жирнее описания, но тише названия. */

@@ -83,7 +83,7 @@ const showNew = await hasPublicApps();
 
   .hero-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
     align-items: center;
     gap: var(--space-6);
   }
@@ -91,28 +91,30 @@ const showNew = await hasPublicApps();
   .hero-copy {
     display: grid;
     gap: var(--space-5);
-    max-width: 36rem;
+    max-width: 42rem;
     position: relative;
+    /* Ширина колонки — точка отсчёта для размера H1 (единицы cqi ниже). */
+    container-type: inline-size;
     z-index: 1;
     /* Текст чуть выше оптического центра маскота — первый экран плотнее. */
     padding-block-end: var(--space-8);
   }
 
   .hero h1 {
-    font-size: var(--fs-display);
+    /* Размер по шкале, но не больше, чем позволяет колонка: самое длинное слово заголовка
+       (--hero-fit — его ширина в em с запасом, см. tokens.css) всегда помещается целиком. */
+    font-size: min(var(--fs-display), 100cqi / var(--hero-fit));
     line-height: var(--lh-tight);
     font-weight: 800;
     letter-spacing: var(--tracking-display);
-    /* Длинные слова («Produktivität», «продуктивности») переносятся, а не вылезают за край. */
-    hyphens: auto;
-    overflow-wrap: break-word;
     text-wrap: balance;
   }
 
   .hero-lead {
     font-size: var(--fs-lead);
     color: var(--text-muted);
-    max-width: 30rem;
+    /* Широкая колонка: на десктопе подзаголовок укладывается в 4–5 строк. */
+    max-width: 40rem;
   }
 
   .hero-actions {
