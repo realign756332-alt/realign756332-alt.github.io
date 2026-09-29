@@ -18,7 +18,11 @@
   --font-sans: var(--font-brand);
 
   /* Типографическая шкала (от 360px до широких экранов) */
-  --fs-display: clamp(2.6rem, 1.6rem + 4.6vw, 5rem);
+  --fs-display: clamp(2.6rem, 1.6rem + 4.6vw, 4.75rem);
+  /* Ширина самого длинного слова H1 первого экрана в em (с запасом ~4%). H1 не бывает крупнее,
+     чем «ширина колонки / --hero-fit», поэтому слово не переносится по частям и не обрезается.
+     Меняется заголовок hero.title в site-copy.md — перепроверьте значение для этого языка. */
+  --hero-fit: 7.7;
   --fs-h2: clamp(1.75rem, 1.35rem + 1.8vw, 2.6rem);
   --fs-h3: clamp(1.15rem, 1.05rem + 0.45vw, 1.35rem);
   --fs-lead: clamp(1.05rem, 0.98rem + 0.35vw, 1.25rem);
@@ -91,6 +95,18 @@
 /* Длинные слова в немецком, нидерландском, польском и т. п. — чуть меньше крупный заголовок. */
 :root:is(:lang(de), :lang(nl), :lang(pl), :lang(ru), :lang(uk), :lang(vi), :lang(fr), :lang(es), :lang(it), :lang(pt)) {
   --fs-display: clamp(2.3rem, 1.5rem + 3.9vw, 4.4rem);
+}
+/* Самое длинное слово заголовка — «produktywności.». */
+:root:lang(pl) {
+  --hero-fit: 9.35;
+}
+/* Русский и украинский: по ширине первой строки («Экосистема вашей», «Екосистема вашої»),
+   чтобы заголовок всегда шёл в две строки: «Экосистема вашей / продуктивности.» */
+:root:lang(ru) {
+  --hero-fit: 10.2;
+}
+:root:lang(uk) {
+  --hero-fit: 9.8;
 }
 :root:is(:lang(ja), :lang(ko), :lang(th), :lang(hi), :lang(ar)) {
   --fs-display: clamp(2.2rem, 1.5rem + 3.4vw, 4rem);

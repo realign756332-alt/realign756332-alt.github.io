@@ -39,8 +39,11 @@ h3 {
   font-weight: 700;
   letter-spacing: var(--tracking-heading);
   text-wrap: balance;
-  overflow-wrap: break-word;
-  hyphens: auto;
+  /* Слова в заголовках переносятся только целиком: без дефисов и без разрывов внутри слова.
+     Размеры заголовков подобраны так, что самое длинное слово помещается даже на 360px. */
+  hyphens: none;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 p {
