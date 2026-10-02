@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { fontProviders } from 'astro/config';
 import subsetFont from 'subset-font';
+import { locales } from './config.mjs';
 
 const require = createRequire(import.meta.url);
 
@@ -72,13 +73,14 @@ function montserrat() {
 }
 
 /**
- * Noto Sans для японского, корейского, тайского, хинди и арабского.
+ * Noto Sans для японского, корейского, традиционного китайского, тайского, хинди и арабского.
  * Подключается только на страницах своего языка (см. BaseHead.astro).
  * Латинские подмножества не берём: латиница на этих страницах тоже Montserrat.
  */
 const scriptFonts = {
   ja: { pkg: 'noto-sans-jp', name: 'Noto Sans JP', subset: true },
   ko: { pkg: 'noto-sans-kr', name: 'Noto Sans KR', subset: true },
+  'zh-hant': { pkg: 'noto-sans-tc', name: 'Noto Sans TC', subset: true },
   th: { pkg: 'noto-sans-thai', name: 'Noto Sans Thai' },
   hi: { pkg: 'noto-sans-devanagari', name: 'Noto Sans Devanagari' },
   ar: { pkg: 'noto-sans-arabic', name: 'Noto Sans Arabic' },
@@ -116,6 +118,28 @@ function listFiles(dir) {
 }
 
 /**
+ * Из файла приложения оставляет всё, кроме переводов на другие языки
+ * (строки внутри `translations:` под `  <другой-язык>:`) — их символы этому шрифту не нужны.
+ * @param {string} text
+ * @param {string} code
+ */
+function ownText(text, code) {
+  let inTranslations = false;
+  let skip = false;
+  return text
+    .split('\n')
+    .filter((line) => {
+      if (/^translations:/.test(line)) inTranslations = true;
+      else if (/^\S/.test(line)) inTranslations = false;
+      if (!inTranslations) return true;
+      const lang = line.match(/^ {2}([\w-]+):\s*$/)?.[1];
+      if (lang) skip = lang !== code;
+      return !skip;
+    })
+    .join('\n');
+}
+
+/**
  * Символы, которые реально встречаются на сайте на этом языке: словарь интерфейса
  * и все файлы контента (там лежат переводы приложений).
  * @param {string} code
@@ -124,12 +148,16 @@ function usedChars(code) {
   const root = new URL('../', import.meta.url);
   const files = [new URL(`i18n/ui/${code}.ts`, root), ...listFiles(new URL('content/', root))];
   const set = new Set();
-  for (const file of files) for (const ch of readFileSync(file, 'utf8')) set.add(ch.codePointAt(0));
+  for (const file of files) {
+    for (const ch of ownText(readFileSync(file, 'utf8'), code)) set.add(ch.codePointAt(0));
+  }
+  // Название языка в переключателе («繁體中文») тоже набирается этим шрифтом.
+  for (const ch of locales.find((l) => l.code === code)?.name ?? '') set.add(ch.codePointAt(0));
   return set;
 }
 
 /**
- * Японский и корейский: у Noto Sans JP/KR больше сотни кусков, и одна страница тянет
+ * Японский, корейский и китайский: у Noto Sans JP/KR/TC больше сотни кусков, и одна страница тянет
  * 20–30 из них (~0,5 МБ). Поэтому при сборке оставляем в каждом куске только символы,
  * которые есть в текстах сайта — выходит в разы меньше. Символ, которого нет в текстах
  * (например, введённый в поиск), покажется системным шрифтом.

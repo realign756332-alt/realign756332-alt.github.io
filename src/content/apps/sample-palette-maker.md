@@ -36,6 +36,9 @@ translations:
   ko:
     tagline: "명암 대비 기준을 통과하는 색상 팔레트를 만드세요."
     description: "Sample Palette Maker는 접근성을 갖춘 색상 팔레트를 만드는 예시 웹 앱입니다. 구독형 페이지 템플릿 확인용입니다."
+  zh-hant:
+    tagline: "打造通過對比度檢查的配色。"
+    description: "Sample Palette Maker 是一款示範用網頁應用程式，可建立符合無障礙標準的配色，在此用於測試訂閱制頁面範本。"
   it:
     tagline: "Palette di colori che superano i test di contrasto."
     description: "Sample Palette Maker è una web app di esempio che crea palette di colori accessibili. Serve a provare i modelli di pagina in abbonamento."

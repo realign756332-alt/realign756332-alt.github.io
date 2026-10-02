@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import { readdirSync, readFileSync } from 'node:fs';
-import { defaultLocale, localeCodes } from './src/i18n/config.mjs';
+import { defaultLocale, locales, localeCodes, langTag } from './src/i18n/config.mjs';
 import { buildFonts } from './src/i18n/fonts.mjs';
 
 // Адрес сайта. Чтобы подключить свой домен — поменяй только эту строку
@@ -47,7 +47,7 @@ export default defineConfig({
       // Языковые альтернативы (xhtml:link hreflang) для каждой страницы.
       i18n: {
         defaultLocale,
-        locales: Object.fromEntries(localeCodes.map((c) => [c, c])),
+        locales: Object.fromEntries(locales.map((l) => [l.code, langTag(l)])),
       },
       // Служебные страницы 404 в sitemap не нужны.
       filter: (page) => !/\/404\/$/.test(new URL(page).pathname),

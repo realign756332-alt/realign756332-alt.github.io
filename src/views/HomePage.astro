@@ -9,7 +9,7 @@ import Principles from '../components/Principles.astro';
 import Faq from '../components/Faq.astro';
 import JsonLd from '../components/JsonLd.astro';
 import { site } from '../data/site';
-import { localizePath, useTranslations } from '../i18n';
+import { langOf, localizePath, useTranslations } from '../i18n';
 
 const locale = Astro.currentLocale ?? 'en';
 const t = useTranslations(locale);
@@ -34,7 +34,7 @@ const website = {
   '@id': `${pageUrl}#website`,
   name: site.name,
   url: pageUrl,
-  inLanguage: locale,
+  inLanguage: langOf(locale),
   description: t.meta.homeDescription,
   publisher: { '@id': `${rootUrl}#organization` },
 };
