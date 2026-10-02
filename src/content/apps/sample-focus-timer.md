@@ -35,6 +35,9 @@ translations:
   ko:
     tagline: "짧게 집중하고, 편안하게 쉬세요."
     description: "Sample Focus Timer는 작업을 집중 시간과 짧은 휴식으로 나눠 주는 iPhone·Android용 예시 앱입니다. 페이지 템플릿 확인용입니다."
+  zh-hant:
+    tagline: "短時專注，從容休息。"
+    description: "Sample Focus Timer 是一款 iPhone 與 Android 的示範應用程式，將工作分成專注時段與短暫休息，在此用於測試頁面範本。"
   it:
     tagline: "Brevi sessioni di concentrazione e pause tranquille."
     description: "Sample Focus Timer è un’app di esempio per iPhone e Android che divide il lavoro in sessioni e brevi pause. Serve a provare i modelli di pagina."

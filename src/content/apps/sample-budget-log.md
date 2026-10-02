@@ -35,6 +35,9 @@ translations:
   ko:
     tagline: "지출을 5초 만에 기록하세요."
     description: "Sample Budget Log는 하루 지출을 카테고리별로 기록하는 iPhone·Android용 예시 앱입니다. 페이지 템플릿 확인용입니다."
+  zh-hant:
+    tagline: "五秒鐘記下一筆支出。"
+    description: "Sample Budget Log 是一款 iPhone 與 Android 的示範應用程式，可依分類記錄每日支出，在此用於測試頁面範本。"
   it:
     tagline: "Registra una spesa in cinque secondi."
     description: "Sample Budget Log è un’app di esempio per iPhone e Android che registra le spese quotidiane per categoria. Serve a provare i modelli di pagina."

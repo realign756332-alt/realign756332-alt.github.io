@@ -35,6 +35,9 @@ translations:
   ko:
     tagline: "브라우저에서 이미지 크기 조정과 압축을."
     description: "Sample Image Resizer는 브라우저에서 바로 이미지 크기를 조정하고 압축하는 예시 웹 앱입니다. 페이지 템플릿 확인용입니다."
+  zh-hant:
+    tagline: "在瀏覽器中調整並壓縮圖片。"
+    description: "Sample Image Resizer 是一款示範用網頁應用程式，可直接在瀏覽器中調整並壓縮圖片，在此用於測試頁面範本。"
   it:
     tagline: "Ridimensiona e comprimi immagini nel browser."
     description: "Sample Image Resizer è una web app di esempio che ridimensiona e comprime le immagini direttamente nel browser. Serve a provare i modelli di pagina."

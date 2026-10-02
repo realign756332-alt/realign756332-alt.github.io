@@ -2,17 +2,18 @@
 // Ненавязчивая подсказка: «Эта страница есть на вашем языке». Никаких автоматических
 // переходов — человек сам решает. Закрыл один раз — больше не показываем (localStorage).
 // Без JavaScript подсказки просто нет.
-import { locales, getLocaleInfo, localizePath, useTranslations, fill } from '../i18n';
+import { locales, getLocaleInfo, langTag, localizePath, useTranslations, fill } from '../i18n';
 
 const current = getLocaleInfo(Astro.currentLocale).code;
 const hints = Object.fromEntries(
   locales.map((l) => {
     const t = useTranslations(l.code).language;
     // Название языка на нём самом, в форме для текста: «English», «Deutsch», «русский», «ไทย».
-    const language = new Intl.DisplayNames([l.code], { type: 'language' }).of(l.code) ?? l.name;
+    const language = new Intl.DisplayNames([langTag(l)], { type: 'language' }).of(langTag(l)) ?? l.name;
     return [
       l.code,
       {
+        lang: langTag(l),
         text: fill(t.hint, { language }),
         action: t.hintAction,
         close: t.hintClose,
@@ -53,22 +54,26 @@ const hints = Object.fromEntries(
   };
 
   if (box && storage.get() !== 'off') {
-    type Hint = { text: string; action: string; close: string; dir: string; href: string };
+    type Hint = { lang: string; text: string; action: string; close: string; dir: string; href: string };
     const hints: Record<string, Hint> = JSON.parse(box.dataset.hints ?? '{}');
     const current = box.dataset.current;
     // Первый язык браузера, на котором есть сайт.
-    const wanted = (navigator.languages ?? [navigator.language])
-      .map((l) => l.toLowerCase().split('-')[0])
-      .find((code) => code in hints);
+    // Китайский: zh-TW, zh-HK, zh-MO и zh-Hant → zh-hant. Упрощённого (zh-CN, zh-Hans) на сайте нет — его не предлагаем.
+    const toCode = (tag: string) => {
+      const [base, ...rest] = tag.toLowerCase().split('-');
+      if (base !== 'zh') return base;
+      return rest.includes('hant') || rest.some((p) => ['tw', 'hk', 'mo'].includes(p)) ? 'zh-hant' : '';
+    };
+    const wanted = (navigator.languages ?? [navigator.language]).map(toCode).find((code) => code in hints);
 
     if (wanted && wanted !== current) {
       const h = hints[wanted];
-      box.lang = wanted;
+      box.lang = h.lang;
       box.dir = h.dir;
       box.querySelector('[data-hint-text]')!.textContent = h.text;
       const link = box.querySelector<HTMLAnchorElement>('[data-hint-link]')!;
       link.href = h.href;
-      link.hreflang = wanted;
+      link.hreflang = h.lang;
       link.textContent = h.action;
       const close = box.querySelector<HTMLButtonElement>('[data-hint-close]')!;
       close.setAttribute('aria-label', h.close);

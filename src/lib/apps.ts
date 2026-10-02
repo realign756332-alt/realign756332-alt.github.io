@@ -1,7 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { sections } from '../data/site';
 import { categories } from '../data/categories';
-import { defaultLocale, fill, localizePath, useTranslations } from '../i18n';
+import { defaultLocale, fill, langOf, localizePath, useTranslations } from '../i18n';
 
 export type App = CollectionEntry<'apps'>;
 
@@ -60,7 +60,7 @@ export function categoryHref(slug: string, locale: string) {
 export function priceLabel(app: App, locale: string) {
   const t = useTranslations(locale).apps;
   const { price, currency, pricingModel, billingPeriod } = app.data;
-  const amount = new Intl.NumberFormat(locale, {
+  const amount = new Intl.NumberFormat(langOf(locale), {
     style: 'currency',
     currency,
     minimumFractionDigits: price % 1 === 0 ? 0 : 2,
